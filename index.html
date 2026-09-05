@@ -1,156 +1,73 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spatial Epidemiology and Health Equity: Bridging Geography, Environment, and Disease</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #e9ffdb;
-        }
-        header {
-            background-color: #2c5282;
-            color: white;
-            padding: 30px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-        }
-        h1 {
-            margin: 0;
-            font-size: 2.5em;
-        }
-        .subtitle {
-            font-size: 1.1em;
-            font-style: italic;
-            margin-top: 10px;
-            opacity: 0.9;
-        }
-        section {
-            background-color: white;
-            padding: 25px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        h2 {
-            color: #2c5282;
-            border-bottom: 3px solid #2c5282;
-            padding-bottom: 10px;
-        }
-        h3 {
-            color: #2d3748;
-            margin-top: 20px;
-        }
-        ul {
-            background-color: #f9f9f9;
-            padding: 20px 40px;
-            border-left: 4px solid #2c5282;
-            border-radius: 4px;
-        }
-        li {
-            margin-bottom: 10px;
-        }
-        a {
-            color: #2c5282;
-            text-decoration: none;
-            font-weight: 500;
-        }
-        a:hover {
-            text-decoration: underline;
-            color: #1a365d;
-        }
-        .resource-box {
-            background-color: #edf2f7;
-            padding: 15px;
-            border-radius: 4px;
-            margin-top: 15px;
-        }
-        footer {
-            background-color: #2c5282;
-            color: white;
-            text-align: center;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 30px;
-            font-size: 0.95em;
-        }
-    </style>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Interactive research on postpartum depression across Washington health regions.">
+  <title>After Birth, Across Washington</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/maplibre-gl@5.6.1/dist/maplibre-gl.css" rel="stylesheet"><link href="styles.css" rel="stylesheet">
 </head>
 <body>
-    <header>
-        <h1>Research: Spatial Epidemiology and Health Equity</h1>
-        <p class="subtitle">Integrating Geography, Environment, and Disease Data Across Underrepresented Communities</p>
-    </header>
-
-    <section>
-        <h2>Research Question</h2>
-        <p>
-            How can we more effectively map and understand disease patterns by integrating geographical data on access to healthcare resources, environmental factors, and socioeconomic conditions—while centering the experiences and health outcomes of minority groups and underrepresented communities often overlooked in traditional epidemiological research?
-        </p>
+  <a class="skip-link" href="#main">Skip to main content</a>
+  <header class="site-header">
+    <a class="brand" href="#top"><span class="brand-mark"></span>After Birth, Across Washington</a>
+    <nav aria-label="Page sections"><a href="#map-section">Map</a><a href="#comparison">Compare</a><a href="#methods">Methods</a></nav>
+  </header>
+  <main id="main">
+    <section class="hero" id="top">
+      <div class="eyebrow">Washington State · 2021–2023</div>
+      <h1>Where does postpartum depression place the greatest burden?</h1>
+      <p class="hero-copy">A regional view of self-reported postpartum depressive symptoms among people who recently gave birth—and a reminder that geography can guide questions, not answer them alone.</p>
+      <div class="hero-actions"><a class="button primary" href="#map-section">Explore the map</a><a class="button secondary" href="#methods">Read the methods</a></div>
+      <div class="stat-row" aria-label="Study summary">
+        <div class="stat"><span class="stat-value">11.0%</span><span class="stat-label">Washington estimate</span></div>
+        <div class="stat"><span class="stat-value">9</span><span class="stat-label">Health regions studied</span></div>
+        <div class="stat"><span class="stat-value">3 years</span><span class="stat-label">Pooled for stability</span></div>
+      </div>
     </section>
-
-    <section>
-        <h2>Why This Research Matters</h2>
-        <p>
-            Health disparities are not random; they are shaped by geography, environment, and access to resources. Communities with limited access to healthcare, clean water, nutritious food, and employment opportunities experience higher rates of chronic disease, higher mortality, and worse health outcomes. Yet, these patterns often remain invisible in aggregate national statistics that mask the lived experiences of minority and underrepresented populations.
-        </p>
-        <p>
-            By merging spatial data on environmental conditions with disease occurrence and treatment outcomes, we can:
-        </p>
-        <ul>
-            <li>Identify health disparities at granular geographical scales (neighborhoods, counties, regions)</li>
-            <li>Uncover causal relationships between environmental factors (pollution, food deserts, transportation barriers) and disease burden</li>
-            <li>Highlight how structural inequities concentrate disease risk in specific communities</li>
-            <li>Inform targeted, equitable health interventions and resource allocation</li>
-            <li>Amplify the voices and stories of underrepresented populations through data</li>
-        </ul>
+    <section class="research-strip" aria-labelledby="question-title">
+      <div><p class="section-kicker">Research question</p><h2 id="question-title">How does reported postpartum depression vary across Washington’s health regions?</h2></div>
+      <p>We examine whether the statewide average conceals meaningful regional differences, while accounting for uncertainty in survey estimates.</p>
     </section>
-
-    <section>
-        <h2>Integrating Spatial and Medical Data: Approaches and Directions</h2>
-        
-        <h3>1. Mapping Environmental Risk and Disease Burden</h3>
-        <p>
-            Combining geographic information systems (GIS) with epidemiological data reveals the spatial relationship between environmental hazards—such as industrial pollution, urban heat islands, or pesticide exposure—and disease clusters. This approach can expose how minority communities disproportionately live near environmental hazards.
-        </p>
-        
-        <h3>2. Healthcare Access and Social Determinants</h3>
-        <p>
-            Incorporating data on the proximity to hospitals, specialists, pharmacies, and preventive care services alongside demographic and health outcome data reveals "healthcare deserts." Understanding these barriers is essential for understanding why certain communities experience worse health outcomes independent of disease incidence.
-        </p>
-        
-        <h3>3. Centering Underrepresented Populations</h3>
-        <p>
-            Traditional health datasets often exclude or underrepresent minority groups, immigrants, low-income communities, and other marginalized populations. By intentionally collecting and integrating data from these communities—through community health workers, participatory research, and trusted local institutions—we create a more complete and equitable picture of health in America.
-        </p>
+    <section class="map-section" id="map-section" aria-labelledby="map-title">
+      <div class="section-heading"><div><p class="section-kicker">Geographic pattern</p><h2 id="map-title">Prevalence by Accountable Community of Health</h2></div><p class="section-note">Select a region for its estimate, confidence interval, and member counties.</p></div>
+      <div class="map-card">
+        <div id="map" role="application" aria-label="Interactive map of postpartum depression estimates by Washington health region"></div>
+        <div id="map-status" class="loading-note" role="status">Loading map and survey estimates…</div>
+        <div class="map-legend"><div class="legend-title">Estimated prevalence</div><div class="legend-scale"></div><div class="legend-labels"><span>9%</span><span>12%</span><span>16%</span></div><div class="legend-missing"><span></span>Suppressed</div></div>
+      </div>
+      <p class="map-caption">Color indicates the weighted share of PRAMS respondents reporting postpartum depressive symptoms. Gray indicates a suppressed estimate. Boundaries aggregate Washington counties into nine health regions.</p>
     </section>
-
-    <section>
-        <h2>Useful Resources and Next Steps</h2>
-        <p>To dive deeper into this research area, consider exploring the following resources:</p>
-        <ul>
-            <li><strong>Spatial Epidemiology Tools:</strong> QGIS, ArcGIS, and R packages (sf, sp, tmap) enable geographic mapping of health data</li>
-            <li><strong>Public Datasets:</strong> CDC Wonder database, EPA environmental data, Census demographic and economic data</li>
-            <li><strong>Community-Based Data:</strong> Participatory epidemiology projects and community health surveys</li>
-            <li><strong>Methodological Frameworks:</strong> Social determinants of health (SDOH) models and health equity assessment tools</li>
-            <li><strong>Case Studies:</strong> Research on environmental justice, redlining's health impacts, and health outcomes in food deserts</li>
-        </ul>
-        
-        <div class="resource-box">
-            <strong>Recommended Starting Point:</strong><br>
-            <a href="https://www.cdc.gov/socialdeterminants/" target="_blank">CDC Social Determinants of Health Initiative</a> - A comprehensive resource on how social, economic, and environmental factors shape health outcomes, with data and tools for research and public health practice.
-        </div>
+    <section class="comparison-section" id="comparison" aria-labelledby="chart-title">
+      <div class="section-heading"><div><p class="section-kicker">Regional comparison</p><h2 id="chart-title">Differences are visible; uncertainty matters</h2></div><p class="section-note">Dots are estimates. Lines show 95% confidence intervals.</p></div>
+      <div class="chart-card"><div id="chart" aria-label="Dot plot comparing estimates and confidence intervals"></div><div class="chart-key"><span><i class="dot-key"></i>Estimate</span><span><i class="line-key"></i>95% confidence interval</span><span><b>*</b> Wide interval; interpret cautiously</span></div></div>
     </section>
-
-    <footer>
-        <p>&copy; 2026 Research on Spatial Epidemiology and Health Equity. All rights reserved. | Last Updated: August 30, 2026</p>
-        <p>For inquiries or collaboration opportunities, please contact the research team.</p>
-    </footer>
+    <section class="finding-grid" aria-labelledby="reading-title">
+      <article class="finding-lead"><p class="section-kicker">What the data suggest</p><h2 id="reading-title">The highest estimate appears in southwest Washington, but the regional intervals overlap.</h2></article>
+      <article><span class="number">01</span><h3>A notable spread</h3><p>Among reportable regions, estimates range from 9.0% in Healthier Here to 15.9% in Cascade Pacific Action Alliance.</p></article>
+      <article><span class="number">02</span><h3>Not a league table</h3><p>Wide, overlapping confidence intervals mean the apparent ordering may reflect sampling variation. The map identifies questions for further study.</p></article>
+      <article><span class="number">03</span><h3>A missing estimate is information</h3><p>Thriving Together NCW is suppressed, and two other regions are flagged as statistically unreliable. Rural areas remain harder to characterize with survey data.</p></article>
+    </section>
+    <section class="methods" id="methods" aria-labelledby="methods-title">
+      <div class="methods-intro"><p class="section-kicker">Data &amp; methods</p><h2 id="methods-title">A regional snapshot, not a causal test</h2><p>The analysis uses the latest common three-year regional period in the downloaded Washington Perinatal Dashboard file. Pooling 2021–2023 improves stability while retaining a recent view.</p></div>
+      <div class="methods-details">
+        <details open><summary>Health measure</summary><p>Weighted Pregnancy Risk Assessment Monitoring System (PRAMS) estimates of postpartum depressive symptoms among respondents who recently gave birth. PRAMS is conducted by Washington DOH with CDC. These are survey estimates, not clinical diagnoses.</p></details>
+        <details><summary>Study area and geography</summary><p>Washington State, summarized into nine Accountable Communities of Health (ACH) regions. Public PRAMS geography is ACH rather than county to protect confidentiality and support adequate sample sizes.</p></details>
+        <details><summary>Limitations</summary><p>Symptoms are self-reported and may be affected by recall, response, or screening differences. Confidence intervals overlap. One estimate is suppressed and two are flagged as unreliable. Regional averages hide within-region variation, and this descriptive analysis cannot explain why differences occur. The source supports a mapped depression measure, not a comparable ACH-level combined depression-and-anxiety estimate.</p></details>
+      </div>
+    </section>
+    <section class="sources" aria-labelledby="sources-title">
+      <p class="section-kicker">Sources</p><h2 id="sources-title">Public data, documented choices</h2>
+      <div class="source-list">
+        <a href="https://doh.wa.gov/data-and-statistical-reports/washington-tracking-network-wtn/perinatal-data/dashboard" target="_blank" rel="noopener"><span>Health data</span><strong>Washington DOH Perinatal Dashboard ↗</strong></a>
+        <a href="https://doh.wa.gov/data-statistical-reports/health-behaviors/pregnancy-risk-assessment-monitoring-system/prams-data-and-resources" target="_blank" rel="noopener"><span>Survey documentation</span><strong>Washington PRAMS ↗</strong></a>
+        <a href="https://data.wsdot.wa.gov/ArcGIS/rest/services/Shared/CountyBoundaries/FeatureServer/0" target="_blank" rel="noopener"><span>Boundary geometry</span><strong>WSDOT County Boundaries ↗</strong></a>
+        <a href="https://www.hca.wa.gov/about-hca/programs-and-initiatives/medicaid-transformation-project-mtp/accountable-communities-health-achs" target="_blank" rel="noopener"><span>Regional definitions</span><strong>Washington HCA ↗</strong></a>
+      </div>
+    </section>
+  </main>
+  <footer><p>After Birth, Across Washington</p><p>Public-health research prototype · Data accessed September 2026</p></footer>
+  <script src="https://unpkg.com/maplibre-gl@5.6.1/dist/maplibre-gl.js"></script><script src="https://cdn.jsdelivr.net/npm/d3@7"></script><script src="app.js"></script>
 </body>
 </html>
