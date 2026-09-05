@@ -18,7 +18,7 @@
     <section class="hero" id="top">
       <div class="eyebrow">Washington State · 2021–2023</div>
       <h1>Where does postpartum depression place the greatest burden?</h1>
-      <p class="hero-copy">A regional view of self-reported postpartum depressive symptoms among people who recently gave birth—and a reminder that geography can guide questions, not answer them alone.</p>
+      <p class="hero-copy">A regional view of postpartum depressive symptoms, with a closer look at Medicaid coverage—and a roadmap for studying social support, rurality, and access to postpartum care.</p>
       <div class="hero-actions"><a class="button primary" href="#map-section">Explore the map</a><a class="button secondary" href="#methods">Read the methods</a></div>
       <div class="stat-row" aria-label="Study summary">
         <div class="stat"><span class="stat-value">11.0%</span><span class="stat-label">Washington estimate</span></div>
@@ -27,8 +27,8 @@
       </div>
     </section>
     <section class="research-strip" aria-labelledby="question-title">
-      <div><p class="section-kicker">Research question</p><h2 id="question-title">How does reported postpartum depression vary across Washington’s health regions?</h2></div>
-      <p>We examine whether the statewide average conceals meaningful regional differences, while accounting for uncertainty in survey estimates.</p>
+      <div><p class="section-kicker">Research question</p><h2 id="question-title">How does the prevalence of postpartum depression or anxiety vary across Washington’s Accountable Communities of Health, and how is it associated with Medicaid coverage, social support, rurality, or access to postpartum care?</h2></div>
+      <p>The available public data directly address regional postpartum depression and statewide differences by Medicaid coverage. Anxiety and the other proposed associations identify the next data needed—not conclusions from this dataset.</p>
     </section>
     <section class="map-section" id="map-section" aria-labelledby="map-title">
       <div class="section-heading"><div><p class="section-kicker">Geographic pattern</p><h2 id="map-title">Prevalence by Accountable Community of Health</h2></div><p class="section-note">Select a region for its estimate, confidence interval, and member counties.</p></div>
@@ -43,18 +43,26 @@
       <div class="section-heading"><div><p class="section-kicker">Regional comparison</p><h2 id="chart-title">Differences are visible; uncertainty matters</h2></div><p class="section-note">Dots are estimates. Lines show 95% confidence intervals.</p></div>
       <div class="chart-card"><div id="chart" aria-label="Dot plot comparing estimates and confidence intervals"></div><div class="chart-key"><span><i class="dot-key"></i>Estimate</span><span><i class="line-key"></i>95% confidence interval</span><span><b>*</b> Wide interval; interpret cautiously</span></div></div>
     </section>
+    <section class="medicaid-section" aria-labelledby="medicaid-title">
+      <div class="section-heading"><div><p class="section-kicker">Medicaid lens</p><h2 id="medicaid-title">A substantial statewide coverage gap</h2></div><p class="section-note">This comparison is statewide; it should not be interpreted as the cause of regional differences.</p></div>
+      <div class="medicaid-layout">
+        <div id="medicaid-chart" class="medicaid-chart" aria-label="Comparison of postpartum depression estimates by Medicaid status"></div>
+        <div class="context-copy"><strong>5.9 percentage points</strong><p>The reported prevalence was higher among Medicaid-covered respondents than non-Medicaid respondents in the 2021–2023 pooled sample. Coverage status may also reflect differences in income, health, and access, so this descriptive gap does not establish that Medicaid causes depression.</p></div>
+      </div>
+    </section>
     <section class="finding-grid" aria-labelledby="reading-title">
       <article class="finding-lead"><p class="section-kicker">What the data suggest</p><h2 id="reading-title">The highest estimate appears in southwest Washington, but the regional intervals overlap.</h2></article>
       <article><span class="number">01</span><h3>A notable spread</h3><p>Among reportable regions, estimates range from 9.0% in Healthier Here to 15.9% in Cascade Pacific Action Alliance.</p></article>
       <article><span class="number">02</span><h3>Not a league table</h3><p>Wide, overlapping confidence intervals mean the apparent ordering may reflect sampling variation. The map identifies questions for further study.</p></article>
-      <article><span class="number">03</span><h3>A missing estimate is information</h3><p>Thriving Together NCW is suppressed, and two other regions are flagged as statistically unreliable. Rural areas remain harder to characterize with survey data.</p></article>
+      <article><span class="number">03</span><h3>The next layer matters</h3><p>Testing rurality, social support, anxiety, or postpartum-care access requires comparable ACH-level measures. They are research priorities here, not variables in the current spatial file.</p></article>
     </section>
     <section class="methods" id="methods" aria-labelledby="methods-title">
       <div class="methods-intro"><p class="section-kicker">Data &amp; methods</p><h2 id="methods-title">A regional snapshot, not a causal test</h2><p>The analysis uses the latest common three-year regional period in the downloaded Washington Perinatal Dashboard file. Pooling 2021–2023 improves stability while retaining a recent view.</p></div>
       <div class="methods-details">
         <details open><summary>Health measure</summary><p>Weighted Pregnancy Risk Assessment Monitoring System (PRAMS) estimates of postpartum depressive symptoms among respondents who recently gave birth. PRAMS is conducted by Washington DOH with CDC. These are survey estimates, not clinical diagnoses.</p></details>
         <details><summary>Study area and geography</summary><p>Washington State, summarized into nine Accountable Communities of Health (ACH) regions. Public PRAMS geography is ACH rather than county to protect confidentiality and support adequate sample sizes.</p></details>
-        <details><summary>Limitations</summary><p>Symptoms are self-reported and may be affected by recall, response, or screening differences. Confidence intervals overlap. One estimate is suppressed and two are flagged as unreliable. Regional averages hide within-region variation, and this descriptive analysis cannot explain why differences occur. The source supports a mapped depression measure, not a comparable ACH-level combined depression-and-anxiety estimate.</p></details>
+        <details><summary>Association measures</summary><p>The workbook supports a statewide Medicaid-status comparison, shown above, but not Medicaid-by-ACH estimates. It does not provide comparable ACH-level anxiety, social-support, rurality, or postpartum-care-access measures. Those associations therefore remain hypotheses for a follow-up analysis using additional linked contextual data.</p></details>
+        <details><summary>Limitations</summary><p>Symptoms are self-reported and may be affected by recall, response, or screening differences. Confidence intervals overlap. One regional estimate is suppressed and two are flagged as unreliable. Regional averages hide within-region variation; the Medicaid comparison may be confounded by socioeconomic and health differences; and this descriptive analysis cannot explain why differences occur.</p></details>
       </div>
     </section>
     <section class="sources" aria-labelledby="sources-title">

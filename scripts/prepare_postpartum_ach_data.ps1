@@ -39,6 +39,7 @@ try {
     $ns = [Xml.XmlNamespaceManager]::new($sheet.NameTable)
     $ns.AddNamespace("x", "http://schemas.openxmlformats.org/spreadsheetml/2006/main")
 
+    $medicaidRows = @()
     $healthRows = foreach ($row in $sheet.SelectNodes("//x:sheetData/x:row", $ns)) {
         $cells = @{}
         foreach ($cell in $row.c) {
@@ -66,6 +67,23 @@ try {
                 data_source = $cells.O
             }
         }
+
+        if ($cells.A -eq "Postpartum Depression" -and
+            $cells.E -eq "WA" -and
+            $cells.G -eq "Medicaid Status" -and
+            $cells.M -eq "Three-Year Rollup" -and
+            $cells.N -eq "2021-2023") {
+            $medicaidRows += [pscustomobject]@{
+                coverage_group = $cells.H
+                indicator = $cells.A
+                period = $cells.N
+                estimate_percent = [math]::Round(100 * [double]$cells.I, 1)
+                lower_95_ci_percent = [math]::Round(100 * [double]$cells.J, 1)
+                upper_95_ci_percent = [math]::Round(100 * [double]$cells.K, 1)
+                relative_standard_error = [double]$cells.L
+                data_source = $cells.O
+            }
+        }
     }
 } finally {
     $zip.Dispose()
@@ -73,6 +91,9 @@ try {
 
 if ($healthRows.Count -ne 9) {
     throw "Expected 9 ACH health rows; found $($healthRows.Count)."
+}
+if ($medicaidRows.Count -ne 2) {
+    throw "Expected 2 Medicaid-status rows; found $($medicaidRows.Count)."
 }
 
 # The workbook uses the dashboard display names current when these estimates
@@ -133,6 +154,7 @@ $achFeatures = foreach ($healthRow in ($healthRows | Sort-Object ach_name)) {
 
 $outputPath = New-Item -ItemType Directory -Force -Path $OutputDirectory
 $healthRows | Sort-Object ach_name | Export-Csv (Join-Path $outputPath "postpartum_depression_ach_2021_2023.csv") -NoTypeInformation -Encoding utf8
+$medicaidRows | Sort-Object coverage_group | Export-Csv (Join-Path $outputPath "postpartum_depression_medicaid_2021_2023.csv") -NoTypeInformation -Encoding utf8
 [ordered]@{ type="FeatureCollection"; name="Washington Accountable Communities of Health"; features=@($achFeatures) } |
     ConvertTo-Json -Depth 100 -Compress |
     Set-Content (Join-Path $outputPath "wa_ach_boundaries.geojson") -Encoding utf8

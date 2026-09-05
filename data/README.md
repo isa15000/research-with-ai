@@ -4,6 +4,7 @@
 
 - `processed/postpartum_depression_ach_2021_2023.csv`: Washington PRAMS estimate of postpartum depression for each Accountable Community of Health (ACH), using the latest common three-year rollup in the downloaded workbook. `estimate_percent` is the field to map. `*` in `reliability_flag` means a wide confidence interval; `**` means suppressed, with the estimate left blank.
 - `processed/wa_ach_boundaries.geojson`: nine ACH features in WGS 84 longitude/latitude. Join it to the CSV with the exact string field `ach_name`.
+- `processed/postpartum_depression_medicaid_2021_2023.csv`: statewide PRAMS estimates by Medicaid and non-Medicaid status. This is a demographic comparison, not an ACH-level association.
 
 The public PRAMS geography is ACH rather than county. This scale protects survey respondents and provides sufficiently large regional samples. The 2021–2023 rollup is preferable to single-year estimates for mapping because it is the latest common regional period and is less unstable.
 

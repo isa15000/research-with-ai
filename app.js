@@ -1,13 +1,13 @@
-const DATA_URL="data/processed/postpartum_depression_ach_2021_2023.csv",GEO_URL="data/processed/wa_ach_boundaries.geojson",STATE_ESTIMATE=11;
+const DATA_URL="data/processed/postpartum_depression_ach_2021_2023.csv",GEO_URL="data/processed/wa_ach_boundaries.geojson",MEDICAID_URL="data/processed/postpartum_depression_medicaid_2021_2023.csv",STATE_ESTIMATE=11;
 const colorFor=v=>v==null||Number.isNaN(v)?"#a9aeab":v<10.5?"#f5dfb0":v<12?"#e4a84d":v<14?"#e66d55":"#a72f3f";
 const escapeHtml=v=>String(v??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"})[c]);
 
 async function loadData(){
-  const [rows,geojson]=await Promise.all([d3.csv(DATA_URL),d3.json(GEO_URL)]);
+  const [rows,geojson,medicaid]=await Promise.all([d3.csv(DATA_URL),d3.json(GEO_URL),d3.csv(MEDICAID_URL,d3.autoType)]);
   rows.forEach(row=>["estimate_percent","lower_95_ci_percent","upper_95_ci_percent","relative_standard_error"].forEach(key=>row[key]=row[key]===""?null:+row[key]));
   const byName=new Map(rows.map(row=>[row.ach_name,row]));
   geojson.features.forEach(feature=>Object.assign(feature.properties,byName.get(feature.properties.ach_name)));
-  return{rows,geojson};
+  return{rows,geojson,medicaid};
 }
 function popupHtml(p){
   const missing=p.estimate_percent==null,estimate=missing?"Suppressed":`${Number(p.estimate_percent).toFixed(1)}%`;
@@ -48,4 +48,17 @@ function buildChart(rows){
   groups.append("circle").attr("cx",d=>x(d.estimate_percent)).attr("cy",d=>y(d.ach_name)+y.bandwidth()/2).attr("r",6).attr("fill",d=>colorFor(d.estimate_percent)).attr("stroke","#fffdfa").attr("stroke-width",2);
   groups.append("text").attr("x",d=>x(d.upper_95_ci_percent)+8).attr("y",d=>y(d.ach_name)+y.bandwidth()/2+4).attr("fill","#202523").attr("font-size",12).attr("font-weight",700).text(d=>`${d.estimate_percent.toFixed(1)}%${d.reliability_flag==="*"?" *":""}`);
 }
-loadData().then(({rows,geojson})=>{buildMap(geojson);buildChart(rows)}).catch(error=>{document.getElementById("map-status").textContent="Data could not load. Open the project through Live Server rather than as a file.";document.getElementById("chart").textContent="Chart data could not load.";console.error(error)});
+function buildMedicaidChart(rows){
+  const width=620,height=230,margin={top:30,right:55,bottom:45,left:125};
+  const svg=d3.select("#medicaid-chart").append("svg").attr("viewBox",`0 0 ${width} ${height}`).attr("role","img");
+  svg.append("title").text("Postpartum depression estimates by Medicaid coverage, with 95 percent confidence intervals");
+  const x=d3.scaleLinear().domain([0,20]).range([margin.left,width-margin.right]);
+  const y=d3.scaleBand().domain(rows.map(d=>d.coverage_group)).range([margin.top,height-margin.bottom]).padding(.55);
+  svg.append("g").attr("class","axis").attr("transform",`translate(0,${height-margin.bottom})`).call(d3.axisBottom(x).ticks(4).tickFormat(d=>`${d}%`)).call(g=>g.select(".domain").remove());
+  svg.append("g").attr("class","axis").attr("transform",`translate(${margin.left},0)`).call(d3.axisLeft(y).tickSize(0)).call(g=>g.select(".domain").remove());
+  const groups=svg.selectAll(".coverage-row").data(rows).join("g");
+  groups.append("line").attr("x1",d=>x(d.lower_95_ci_percent)).attr("x2",d=>x(d.upper_95_ci_percent)).attr("y1",d=>y(d.coverage_group)+y.bandwidth()/2).attr("y2",d=>y(d.coverage_group)+y.bandwidth()/2).attr("stroke","#244b40").attr("stroke-width",3);
+  groups.append("circle").attr("cx",d=>x(d.estimate_percent)).attr("cy",d=>y(d.coverage_group)+y.bandwidth()/2).attr("r",7).attr("fill","#e66d55").attr("stroke","#fffdfa").attr("stroke-width",2);
+  groups.append("text").attr("x",d=>x(d.upper_95_ci_percent)+9).attr("y",d=>y(d.coverage_group)+y.bandwidth()/2+4).attr("font-size",12).attr("font-weight",700).text(d=>`${d.estimate_percent.toFixed(1)}%`);
+}
+loadData().then(({rows,geojson,medicaid})=>{buildMap(geojson);buildChart(rows);buildMedicaidChart(medicaid)}).catch(error=>{document.getElementById("map-status").textContent="Data could not load. Open the project through Live Server rather than as a file.";document.getElementById("chart").textContent="Chart data could not load.";document.getElementById("medicaid-chart").textContent="Medicaid comparison could not load.";console.error(error)});
