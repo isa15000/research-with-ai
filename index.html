@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Interactive research on postpartum depression across Washington health regions.">
-  <title>After Birth, Across Washington</title>
+  <meta name="description" content="Exploring maternal postpartum checkup utilization across Washington geographic and insurance groups.">
+  <title>Postpartum Healthcare Utilization Across Washington State</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet">
   <link href="https://unpkg.com/maplibre-gl@5.6.1/dist/maplibre-gl.css" rel="stylesheet"><link href="styles.css" rel="stylesheet">
@@ -12,70 +12,79 @@
   <a class="skip-link" href="#main">Skip to main content</a>
   <header class="site-header">
     <a class="brand" href="#top"><span class="brand-mark"></span>After Birth, Across Washington</a>
-    <nav aria-label="Page sections"><a href="#map-section">Map</a><a href="#comparison">Compare</a><a href="#methods">Methods</a></nav>
+    <nav aria-label="Page sections"><a href="#map-section">Map</a><a href="#comparison">Compare</a><a href="#insurance">Insurance</a><a href="#methods">Methods</a></nav>
   </header>
   <main id="main">
     <section class="hero" id="top">
-      <div class="eyebrow">Washington State · 2021–2023</div>
-      <h1>Where does postpartum depression place the greatest burden?</h1>
-      <p class="hero-copy">A regional view of postpartum depressive symptoms, with a closer look at Medicaid coverage—and a roadmap for studying social support, rurality, and access to postpartum care.</p>
+      <div class="eyebrow">Washington State · Research in progress</div>
+      <h1>Postpartum Healthcare Utilization Across Washington State</h1>
+      <p class="hero-copy">Exploring receipt of a maternal postpartum checkup across geographic and insurance groups. Checkup estimates are not yet available in this repository.</p>
       <div class="hero-actions"><a class="button primary" href="#map-section">Explore the map</a><a class="button secondary" href="#methods">Read the methods</a></div>
       <div class="stat-row" aria-label="Study summary">
-        <div class="stat"><span class="stat-value">11.0%</span><span class="stat-label">Washington estimate</span></div>
-        <div class="stat"><span class="stat-value">9</span><span class="stat-label">Health regions studied</span></div>
-        <div class="stat"><span class="stat-value">3 years</span><span class="stat-label">Pooled for stability</span></div>
+        <div class="stat"><span class="stat-value">Checkup</span><span class="stat-label">Primary utilization measure</span></div>
+        <div class="stat"><span class="stat-value">9</span><span class="stat-label">ACH boundaries available</span></div>
+        <div class="stat"><span class="stat-value">Pending</span><span class="stat-label">Checkup data and study years</span></div>
       </div>
     </section>
     <section class="research-strip" aria-labelledby="question-title">
-      <div><p class="section-kicker">Research question</p><h2 id="question-title">How does the prevalence of postpartum depression or anxiety vary across Washington’s Accountable Communities of Health, and how is it associated with Medicaid coverage, social support, rurality, or access to postpartum care?</h2></div>
-      <p>The available public data directly address regional postpartum depression and statewide differences by Medicaid coverage. Anxiety and the other proposed associations identify the next data needed—not conclusions from this dataset.</p>
+      <div><p class="section-kicker">Research question</p><h2 id="question-title">How does postpartum healthcare utilization vary across Washington State, particularly across geographic and insurance groups?</h2></div>
+      <p>Healthcare utilization means using healthcare services. Here, the primary measure is whether a respondent received a maternal postpartum checkup. A checkup measures one aspect of utilization; it does not capture all access to care or its quality.</p>
     </section>
     <section class="map-section" id="map-section" aria-labelledby="map-title">
-      <div class="section-heading"><div><p class="section-kicker">Geographic pattern</p><h2 id="map-title">Prevalence by Accountable Community of Health</h2></div><p class="section-note">Select a region for its estimate, confidence interval, and member counties.</p></div>
+      <div class="section-heading"><div><p class="section-kicker">Geographic pattern</p><h2 id="map-title">Postpartum checkups across health regions</h2></div><p class="section-note">ACH boundaries are available; geographic checkup estimates are missing. Select a region to see its data status and counties.</p></div>
       <div class="map-card">
-        <div id="map" role="application" aria-label="Interactive map of postpartum depression estimates by Washington health region"></div>
-        <div id="map-status" class="loading-note" role="status">Loading map and survey estimates…</div>
-        <div class="map-legend"><div class="legend-title">Estimated prevalence</div><div class="legend-scale"></div><div class="legend-labels"><span>9%</span><span>12%</span><span>16%</span></div><div class="legend-missing"><span></span>Suppressed</div></div>
+        <div id="map" role="application" aria-label="Washington ACH geography; postpartum checkup estimates pending"></div>
+        <div id="map-status" class="loading-note" role="status">Loading regional boundaries…</div>
+        <div class="map-legend"><div class="legend-title">Maternal postpartum checkup</div><div id="estimate-legend" hidden><div class="legend-scale"></div><div class="legend-labels"><span>0%</span><span>50%</span><span>100%</span></div></div><div class="legend-missing"><span></span>Missing or suppressed</div></div>
       </div>
-      <p class="map-caption">Color indicates the weighted share of PRAMS respondents reporting postpartum depressive symptoms. Gray indicates a suppressed estimate. Boundaries aggregate Washington counties into nine health regions.</p>
+      <p class="map-caption">Planned measure: estimated percentage of respondents who received a maternal postpartum checkup. Gray currently means checkup data have not been supplied, not zero utilization or source suppression. The nine ACH boundaries are retained for orientation; county-level checkup estimates are not available.</p>
     </section>
     <section class="comparison-section" id="comparison" aria-labelledby="chart-title">
-      <div class="section-heading"><div><p class="section-kicker">Regional comparison</p><h2 id="chart-title">Differences are visible; uncertainty matters</h2></div><p class="section-note">Dots are estimates. Lines show 95% confidence intervals.</p></div>
-      <div class="chart-card"><div id="chart" aria-label="Dot plot comparing estimates and confidence intervals"></div><div class="chart-key"><span><i class="dot-key"></i>Estimate</span><span><i class="line-key"></i>95% confidence interval</span><span><b>*</b> Wide interval; interpret cautiously</span></div></div>
+      <div class="section-heading"><div><p class="section-kicker">Regional comparison</p><h2 id="chart-title">Regional estimates: awaiting checkup data</h2></div><p class="section-note">When data are available, dots will show estimates and lines will show available 95% confidence intervals.</p></div>
+      <div class="chart-card"><div id="chart" aria-label="Regional postpartum checkup estimates"><p class="empty-state">Geographic checkup estimates are not available. Washington PRAMS estimates by ACH, with years and uncertainty, are needed before regional patterns can be shown.</p></div><div class="chart-key" hidden><span><i class="dot-key"></i>Estimate</span><span><i class="line-key"></i>95% confidence interval</span><span><b>*</b> Wide interval; interpret cautiously</span></div></div>
     </section>
-    <section class="medicaid-section" aria-labelledby="medicaid-title">
-      <div class="section-heading"><div><p class="section-kicker">Medicaid lens</p><h2 id="medicaid-title">A substantial statewide coverage gap</h2></div><p class="section-note">This comparison is statewide; it should not be interpreted as the cause of regional differences.</p></div>
-      <div class="medicaid-layout">
-        <div id="medicaid-chart" class="medicaid-chart" aria-label="Comparison of postpartum depression estimates by Medicaid status"></div>
-        <div class="context-copy"><strong>5.9 percentage points</strong><p>The reported prevalence was higher among Medicaid-covered respondents than non-Medicaid respondents in the 2021–2023 pooled sample. Coverage status may also reflect differences in income, health, and access, so this descriptive gap does not establish that Medicaid causes depression.</p></div>
+    <section class="insurance-section" id="insurance" aria-labelledby="insurance-title">
+      <div class="section-heading"><div><p class="section-kicker">Insurance comparison</p><h2 id="insurance-title">Postpartum checkup utilization by insurance group</h2></div><p class="section-note">Source-defined insurance categories and their checkup estimates are needed before a comparison can be shown.</p></div>
+      <div class="insurance-layout">
+        <div id="insurance-chart" class="insurance-chart" aria-label="Postpartum checkup estimates by insurance group"><p class="empty-state">Insurance-specific checkup data are not available. No coverage groups or percentages have been assumed.</p></div>
+        <div class="context-copy"><strong>Comparison pending</strong><p>Use the exact insurance categories and coverage timing defined by the checkup source. Differences between groups would be descriptive associations, not evidence of causation.</p></div>
       </div>
     </section>
-    <section class="finding-grid" aria-labelledby="reading-title">
-      <article class="finding-lead"><p class="section-kicker">What the data suggest</p><h2 id="reading-title">The highest estimate appears in southwest Washington, but the regional intervals overlap.</h2></article>
-      <article><span class="number">01</span><h3>A notable spread</h3><p>Among reportable regions, estimates range from 9.0% in Healthier Here to 15.9% in Cascade Pacific Action Alliance.</p></article>
-      <article><span class="number">02</span><h3>Not a league table</h3><p>Wide, overlapping confidence intervals mean the apparent ordering may reflect sampling variation. The map identifies questions for further study.</p></article>
-      <article><span class="number">03</span><h3>The next layer matters</h3><p>Testing rurality, social support, anxiety, or postpartum-care access requires comparable ACH-level measures. They are research priorities here, not variables in the current spatial file.</p></article>
+    <section class="finding-grid" id="interpretation" aria-labelledby="reading-title">
+      <article class="finding-lead"><p class="section-kicker">What patterns may suggest</p><h2 id="reading-title">Questions for investigation</h2></article>
+      <article><span class="number">01</span><h3>Descriptive comparisons</h3><p>Geographic and insurance patterns are descriptive. Differences between groups do not establish that insurance coverage or geographic location causes differences in postpartum healthcare utilization. Other factors, including provider availability, transportation, income, health needs, and other barriers to care, may contribute.</p></article>
+      <article><span class="number">02</span><h3>Keep the levels distinct</h3><p>No joint geography-by-insurance checkup data are available. Separate regional and statewide insurance summaries cannot be directly combined to explain one another.</p></article>
+      <article><span class="number">03</span><h3>Evidence before findings</h3><p>There are no checkup estimates to interpret yet. Once available, patterns may identify disparities deserving further investigation. Confidence intervals and reliability flags must inform any comparison; regions will not be ranked as best or worst.</p></article>
     </section>
     <section class="methods" id="methods" aria-labelledby="methods-title">
-      <div class="methods-intro"><p class="section-kicker">Data &amp; methods</p><h2 id="methods-title">A regional snapshot, not a causal test</h2><p>The analysis uses the latest common three-year regional period in the downloaded Washington Perinatal Dashboard file. Pooling 2021–2023 improves stability while retaining a recent view.</p></div>
+      <div class="methods-intro"><p class="section-kicker">Data &amp; methods</p><h2 id="methods-title">A descriptive, exploratory study</h2><p>The intended primary source is Washington PRAMS / Washington State Department of Health. The local Perinatal Dashboard workbook was inspected and contains no maternal postpartum-checkup variable. No checkup study years or estimates are currently represented.</p></div>
       <div class="methods-details">
-        <details open><summary>Health measure</summary><p>Weighted Pregnancy Risk Assessment Monitoring System (PRAMS) estimates of postpartum depressive symptoms among respondents who recently gave birth. PRAMS is conducted by Washington DOH with CDC. These are survey estimates, not clinical diagnoses.</p></details>
-        <details><summary>Study area and geography</summary><p>Washington State, summarized into nine Accountable Communities of Health (ACH) regions. Public PRAMS geography is ACH rather than county to protect confidentiality and support adequate sample sizes.</p></details>
-        <details><summary>Association measures</summary><p>The workbook supports a statewide Medicaid-status comparison, shown above, but not Medicaid-by-ACH estimates. It does not provide comparable ACH-level anxiety, social-support, rurality, or postpartum-care-access measures. Those associations therefore remain hypotheses for a follow-up analysis using additional linked contextual data.</p></details>
-        <details><summary>Limitations</summary><p>Symptoms are self-reported and may be affected by recall, response, or screening differences. Confidence intervals overlap. One regional estimate is suppressed and two are flagged as unreliable. Regional averages hide within-region variation; the Medicaid comparison may be confounded by socioeconomic and health differences; and this descriptive analysis cannot explain why differences occur.</p></details>
+        <details open><summary>Population and primary outcome</summary><p>People who recently had a live birth and participated in PRAMS. The requested outcome is “Had maternal postpartum checkup.” Confirm the exact question, denominator, recall window, and survey weighting in the supplied source before adding estimates.</p></details>
+        <details><summary>Geography, insurance, and years</summary><p id="data-coverage">The map retains nine ACH boundaries only. Checkup estimates by ACH, insurance categories, insurance coverage timing, and study years have not been supplied. Existing data for a different outcome do not establish availability for this measure.</p></details>
+        <details><summary>Estimates and uncertainty</summary><p>PRAMS percentages are survey estimates where applicable. Display source-provided 95% confidence intervals and reliability notes. Missing and suppressed observations remain unavailable, never zero. Correlation and group differences do not establish causation.</p></details>
+        <details><summary>Data still needed</summary><p>Obtain Washington DOH / PRAMS “Had maternal postpartum checkup” estimates by ACH and separately by source-defined insurance group for a comparable period. Include weighted percentages, 95% confidence intervals where available, suppression and reliability notes, and documentation of coverage timing. See the <a href="data/README.md">data requirements and CSV fields</a>.</p></details>
       </div>
+    </section>
+    <section class="research-strip" id="limitations" aria-labelledby="limitations-title">
+      <div><p class="section-kicker">Limitations</p><h2 id="limitations-title">What a checkup measure can tell us</h2><p>Receiving a postpartum checkup is a measure of healthcare utilization and does not capture every dimension of healthcare access or quality. Observational, descriptive comparisons cannot establish causation.</p></div>
+      <div><p>PRAMS responses are self-reported. Survey estimates contain sampling uncertainty; small geographic samples may yield unreliable or suppressed estimates. Broad regions may hide differences within them.</p><p>Insurance and geography may not be available at identical levels. The current data gap prevents estimating geographic or insurance differences in checkup utilization.</p></div>
     </section>
     <section class="sources" aria-labelledby="sources-title">
       <p class="section-kicker">Sources</p><h2 id="sources-title">Public data, documented choices</h2>
+      <p>Survey documentation and related US research provide context; the academic studies do not supply estimates for this Washington map.</p>
       <div class="source-list">
+        <a href="https://www.cdc.gov/prams/" target="_blank" rel="noopener"><span>Survey background</span><strong>CDC PRAMS ↗</strong></a>
+        <a href="https://jamanetwork.com/journals/jama-health-forum/fullarticle/2797463" target="_blank" rel="noopener"><span>Interrante et al. (2022)</span><strong>Association of Health Insurance, Geography, and Race and Ethnicity With Disparities in Receipt of Recommended Postpartum Care in the US ↗</strong></a>
+        <a href="https://jamanetwork.com/journals/jamanetworkopen/fullarticle/2805510" target="_blank" rel="noopener"><span>Saldanha et al. (2023)</span><strong>Health Insurance Coverage and Postpartum Outcomes in the US: A Systematic Review ↗</strong></a>
         <a href="https://doh.wa.gov/data-and-statistical-reports/washington-tracking-network-wtn/perinatal-data/dashboard" target="_blank" rel="noopener"><span>Health data</span><strong>Washington DOH Perinatal Dashboard ↗</strong></a>
-        <a href="https://doh.wa.gov/data-statistical-reports/health-behaviors/pregnancy-risk-assessment-monitoring-system/prams-data-and-resources" target="_blank" rel="noopener"><span>Survey documentation</span><strong>Washington PRAMS ↗</strong></a>
+        <a href="https://doh.wa.gov/data-statistical-reports/health-behaviors/pregnancy-risk-assessment-monitoring-system" target="_blank" rel="noopener"><span>Survey documentation</span><strong>Washington PRAMS ↗</strong></a>
         <a href="https://data.wsdot.wa.gov/ArcGIS/rest/services/Shared/CountyBoundaries/FeatureServer/0" target="_blank" rel="noopener"><span>Boundary geometry</span><strong>WSDOT County Boundaries ↗</strong></a>
         <a href="https://www.hca.wa.gov/about-hca/programs-and-initiatives/medicaid-transformation-project-mtp/accountable-communities-health-achs" target="_blank" rel="noopener"><span>Regional definitions</span><strong>Washington HCA ↗</strong></a>
       </div>
     </section>
   </main>
-  <footer><p>After Birth, Across Washington</p><p>Public-health research prototype · Data accessed September 2026</p></footer>
+  <footer><p>After Birth, Across Washington</p><p>Public-health research prototype · Checkup estimates pending</p></footer>
+  <noscript><p class="empty-state">JavaScript is needed for the interactive map. Checkup estimates have not been supplied; see Methods for data requirements.</p></noscript>
   <script src="https://unpkg.com/maplibre-gl@5.6.1/dist/maplibre-gl.js"></script><script src="https://cdn.jsdelivr.net/npm/d3@7"></script><script src="app.js"></script>
 </body>
 </html>

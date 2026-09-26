@@ -1,64 +1,251 @@
-const DATA_URL="data/processed/postpartum_depression_ach_2021_2023.csv",GEO_URL="data/processed/wa_ach_boundaries.geojson",MEDICAID_URL="data/processed/postpartum_depression_medicaid_2021_2023.csv",STATE_ESTIMATE=11;
-const colorFor=v=>v==null||Number.isNaN(v)?"#a9aeab":v<10.5?"#f5dfb0":v<12?"#e4a84d":v<14?"#e66d55":"#a72f3f";
-const escapeHtml=v=>String(v??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"})[c]);
+// The templates deliberately contain headers only. Supply verified Washington
+// PRAMS checkup data following data/README.md; never reuse another outcome.
+const DATA_URL = "data/processed/postpartum_checkup_ach.csv";
+const INSURANCE_URL = "data/processed/postpartum_checkup_insurance.csv";
+const GEO_URL = "data/processed/wa_ach_boundaries.geojson";
+const OUTCOME = "Had maternal postpartum checkup";
+const escapeHtml = value => String(value ?? "").replace(/[&<>'"]/g, c =>
+  ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"})[c]);
+const percent = value => value == null ? "Not available" : `${value.toFixed(1)}%`;
 
-async function loadData(){
-  const [rows,geojson,medicaid]=await Promise.all([d3.csv(DATA_URL),d3.json(GEO_URL),d3.csv(MEDICAID_URL,d3.autoType)]);
-  rows.forEach(row=>["estimate_percent","lower_95_ci_percent","upper_95_ci_percent","relative_standard_error"].forEach(key=>row[key]=row[key]===""?null:+row[key]));
-  const byName=new Map(rows.map(row=>[row.ach_name,row]));
-  geojson.features.forEach(feature=>Object.assign(feature.properties,byName.get(feature.properties.ach_name)));
-  return{rows,geojson,medicaid};
+// Blank, suppressed, and nonnumeric values must never become zero.
+function numeric(value) {
+  const text = String(value ?? "").trim();
+  if (!text || !/^\d+(\.\d+)?$/.test(text)) return null;
+  const number = Number(text);
+  return number >= 0 && number <= 100 ? number : null;
 }
-function popupHtml(p){
-  const missing=p.estimate_percent==null,estimate=missing?"Suppressed":`${Number(p.estimate_percent).toFixed(1)}%`;
-  const interval=missing?"No public estimate":`95% CI ${Number(p.lower_95_ci_percent).toFixed(1)}–${Number(p.upper_95_ci_percent).toFixed(1)}%`;
-  const caution=p.reliability_flag==="*"?" · Wide interval":"";
-  return `<div class="popup-region"><div class="popup-kicker">Accountable Community of Health</div><h3>${escapeHtml(p.ach_name)}</h3><div class="popup-estimate">${estimate}</div><div class="popup-meta">${interval}${caution}</div><div class="popup-counties"><strong>Counties:</strong> ${escapeHtml(p.counties)}</div></div>`;
+function normalize(row) {
+  const result = {...row};
+  result.suppressed = row.suppression_status === "suppressed" || row.reliability_flag === "**";
+  for (const key of ["estimate_percent", "lower_95_ci_percent", "upper_95_ci_percent"]) {
+    result[key] = result.suppressed || row.suppression_status === "missing" ? null : numeric(row[key]);
+  }
+  return result;
 }
-function buildMap(geojson){
-  const status=document.getElementById("map-status");
-  const map=new maplibregl.Map({container:"map",style:"https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",center:[-120.8,47.35],zoom:5.35,minZoom:4.5,maxZoom:10,attributionControl:false});
-  map.addControl(new maplibregl.NavigationControl({showCompass:false}),"top-right");map.addControl(new maplibregl.AttributionControl({compact:true}));
-  // Add the research layer as soon as the basemap style is ready. Waiting for
-  // MapLibre's full `load` event can leave the overlay blocked by slow tiles.
-  map.once("style.load",()=>{
-    map.addSource("ach",{type:"geojson",data:geojson,generateId:true});
-    map.addLayer({id:"ach-fill",type:"fill",source:"ach",paint:{"fill-color":["case",["==",["get","estimate_percent"],null],"#a9aeab",["step",["to-number",["get","estimate_percent"]],"#f5dfb0",10.5,"#e4a84d",12,"#e66d55",14,"#a72f3f"]],"fill-opacity":["case",["boolean",["feature-state","hover"],false],.9,.72]}});
-    map.addLayer({id:"ach-outline",type:"line",source:"ach",paint:{"line-color":"#fffdfa","line-width":1.5,"line-opacity":.95}});
-    let hoveredId=null;
-    map.on("mousemove","ach-fill",event=>{map.getCanvas().style.cursor="pointer";if(hoveredId!==null)map.setFeatureState({source:"ach",id:hoveredId},{hover:false});hoveredId=event.features[0].id;map.setFeatureState({source:"ach",id:hoveredId},{hover:true})});
-    map.on("mouseleave","ach-fill",()=>{map.getCanvas().style.cursor="";if(hoveredId!==null)map.setFeatureState({source:"ach",id:hoveredId},{hover:false});hoveredId=null});
-    map.on("click","ach-fill",event=>new maplibregl.Popup({maxWidth:"290px"}).setLngLat(event.lngLat).setHTML(popupHtml(event.features[0].properties)).addTo(map));
-    status.hidden=true;
+function hasInterval(row) {
+  return row.estimate_percent != null && row.lower_95_ci_percent != null &&
+    row.upper_95_ci_percent != null && row.lower_95_ci_percent <= row.estimate_percent &&
+    row.upper_95_ci_percent >= row.estimate_percent;
+}
+function statusText(row) {
+  if (row.suppressed) return "Suppressed by source";
+  if (row.estimate_percent == null) return "Checkup estimate not available";
+  return percent(row.estimate_percent);
+}
+function intervalText(row) {
+  return hasInterval(row)
+    ? `95% CI ${percent(row.lower_95_ci_percent)}–${percent(row.upper_95_ci_percent)}`
+    : "95% CI not available";
+}
+function reliabilityText(row) {
+  return [row.reliability_flag === "*" ? "Unreliable estimate; interpret cautiously" :
+    row.reliability_flag === "**" ? "Suppressed estimate" : row.reliability_flag,
+    row.reliability_note].filter(Boolean).join(" · ") || "No reliability note supplied";
+}
+async function loadRows(url, key) {
+  const raw = await d3.csv(url);
+  const required = ["indicator", key, "period", "estimate_percent", "lower_95_ci_percent",
+    "upper_95_ci_percent", "reliability_flag", "suppression_status", "reliability_note",
+    "data_source", "source_url"];
+  if (key === "coverage_group") required.push("coverage_timing", "geography");
+  if (required.some(field => !raw.columns.includes(field))) throw new Error("Incomplete CSV schema");
+  const seen = new Set();
+  const rows = raw.map(row => {
+    if (row.indicator !== OUTCOME || !row[key]?.trim() || !row.period?.trim() ||
+        !row.data_source?.trim() || !row.source_url?.trim() || seen.has(row[key])) {
+      throw new Error("Check indicator, source, period, and unique group names");
+    }
+    if (key === "coverage_group" && (!row.coverage_timing?.trim() || !row.geography?.trim())) {
+      throw new Error("Insurance geography and timing are required");
+    }
+    if (!["", "reported", "missing", "suppressed"].includes(row.suppression_status)) {
+      throw new Error("Unrecognized suppression status");
+    }
+    seen.add(row[key]);
+    return normalize(row);
   });
-  map.on("error",event=>{if(!map.loaded())status.textContent="The basemap could not load. Run with Live Server and check your internet connection.";console.error(event.error)});
+  // One comparable source-defined period per chart; never silently pool rows.
+  if (new Set(rows.map(row => row.period)).size > 1 ||
+      (key === "coverage_group" && (new Set(rows.map(row => row.geography)).size > 1 ||
+      new Set(rows.map(row => row.coverage_timing)).size > 1))) {
+    throw new Error("Mixed comparison periods or insurance definitions");
+  }
+  return rows;
 }
-function buildChart(rows){
-  const visible=rows.filter(d=>d.estimate_percent!=null).sort((a,b)=>d3.descending(a.estimate_percent,b.estimate_percent));
-  const labels=new Map([["Cascade Pacific Action Alliance","Cascade Pacific"],["Olympic Community of Health","Olympic"],["Better Health Together","Better Health Together"],["Greater Health Now","Greater Health Now"],["Southwest Washington","Southwest Washington"],["Healthier Here","Healthier Here"],["North Sound","North Sound"],["Elevate Health","Elevate Health"]]);
-  const width=980,margin={top:24,right:70,bottom:48,left:210},rowHeight=48,height=margin.top+margin.bottom+visible.length*rowHeight;
-  const svg=d3.select("#chart").append("svg").attr("viewBox",`0 0 ${width} ${height}`).attr("role","img");svg.append("title").text("Regional postpartum depression estimates with 95 percent confidence intervals");
-  const x=d3.scaleLinear().domain([0,25]).range([margin.left,width-margin.right]),y=d3.scaleBand().domain(visible.map(d=>d.ach_name)).range([margin.top,height-margin.bottom]).padding(.42);
-  svg.append("g").attr("class","axis").attr("transform",`translate(0,${height-margin.bottom})`).call(d3.axisBottom(x).ticks(5).tickFormat(d=>`${d}%`)).call(g=>g.select(".domain").remove());
-  svg.append("g").attr("class","axis").attr("transform",`translate(${margin.left},0)`).call(d3.axisLeft(y).tickFormat(d=>labels.get(d))).call(g=>g.select(".domain").remove());
-  svg.append("line").attr("x1",x(STATE_ESTIMATE)).attr("x2",x(STATE_ESTIMATE)).attr("y1",margin.top-8).attr("y2",height-margin.bottom).attr("stroke","#7f8581").attr("stroke-dasharray","4 4");
-  svg.append("text").attr("x",x(STATE_ESTIMATE)+5).attr("y",margin.top-10).attr("fill","#626a65").attr("font-size",11).text("Washington 11.0%");
-  const groups=svg.selectAll(".estimate-row").data(visible).join("g").attr("class","estimate-row");
-  groups.append("line").attr("x1",d=>x(d.lower_95_ci_percent)).attr("x2",d=>x(d.upper_95_ci_percent)).attr("y1",d=>y(d.ach_name)+y.bandwidth()/2).attr("y2",d=>y(d.ach_name)+y.bandwidth()/2).attr("stroke","#244b40").attr("stroke-width",2);
-  groups.append("circle").attr("cx",d=>x(d.estimate_percent)).attr("cy",d=>y(d.ach_name)+y.bandwidth()/2).attr("r",6).attr("fill",d=>colorFor(d.estimate_percent)).attr("stroke","#fffdfa").attr("stroke-width",2);
-  groups.append("text").attr("x",d=>x(d.upper_95_ci_percent)+8).attr("y",d=>y(d.ach_name)+y.bandwidth()/2+4).attr("fill","#202523").attr("font-size",12).attr("font-weight",700).text(d=>`${d.estimate_percent.toFixed(1)}%${d.reliability_flag==="*"?" *":""}`);
+function popupHtml(row) {
+  return `<div class="popup-region"><div class="popup-kicker">Accountable Community of Health</div>
+    <h3>${escapeHtml(row.ach_name)}</h3><div class="popup-estimate">${escapeHtml(statusText(row))}</div>
+    <div class="popup-meta">Period: ${escapeHtml(row.period || "Not supplied")}<br>
+    ${escapeHtml(intervalText(row))}<br>${escapeHtml(reliabilityText(row))}</div>
+    <div class="popup-counties"><strong>Counties:</strong> ${escapeHtml(row.counties)}</div></div>`;
 }
-function buildMedicaidChart(rows){
-  const width=620,height=230,margin={top:30,right:55,bottom:45,left:125};
-  const svg=d3.select("#medicaid-chart").append("svg").attr("viewBox",`0 0 ${width} ${height}`).attr("role","img");
-  svg.append("title").text("Postpartum depression estimates by Medicaid coverage, with 95 percent confidence intervals");
-  const x=d3.scaleLinear().domain([0,20]).range([margin.left,width-margin.right]);
-  const y=d3.scaleBand().domain(rows.map(d=>d.coverage_group)).range([margin.top,height-margin.bottom]).padding(.55);
-  svg.append("g").attr("class","axis").attr("transform",`translate(0,${height-margin.bottom})`).call(d3.axisBottom(x).ticks(4).tickFormat(d=>`${d}%`)).call(g=>g.select(".domain").remove());
-  svg.append("g").attr("class","axis").attr("transform",`translate(${margin.left},0)`).call(d3.axisLeft(y).tickSize(0)).call(g=>g.select(".domain").remove());
-  const groups=svg.selectAll(".coverage-row").data(rows).join("g");
-  groups.append("line").attr("x1",d=>x(d.lower_95_ci_percent)).attr("x2",d=>x(d.upper_95_ci_percent)).attr("y1",d=>y(d.coverage_group)+y.bandwidth()/2).attr("y2",d=>y(d.coverage_group)+y.bandwidth()/2).attr("stroke","#244b40").attr("stroke-width",3);
-  groups.append("circle").attr("cx",d=>x(d.estimate_percent)).attr("cy",d=>y(d.coverage_group)+y.bandwidth()/2).attr("r",7).attr("fill","#e66d55").attr("stroke","#fffdfa").attr("stroke-width",2);
-  groups.append("text").attr("x",d=>x(d.upper_95_ci_percent)+9).attr("y",d=>y(d.coverage_group)+y.bandwidth()/2+4).attr("font-size",12).attr("font-weight",700).text(d=>`${d.estimate_percent.toFixed(1)}%`);
+function buildMap(geojson) {
+  const status = document.getElementById("map-status");
+  if (!window.maplibregl) {
+    status.textContent = "The map library could not load. Regional data status is listed below.";
+    return;
+  }
+  let map;
+  try {
+    map = new maplibregl.Map({
+      container:"map", style:"https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
+      center:[-120.8,47.35], zoom:5.35, minZoom:4.5, maxZoom:10, attributionControl:false
+    });
+  } catch {
+    status.textContent = "The interactive map is unavailable in this browser. See regional data status below.";
+    return;
+  }
+  map.addControl(new maplibregl.NavigationControl({showCompass:false}),"top-right");
+  map.addControl(new maplibregl.AttributionControl({compact:true}));
+  let ready = false;
+  const timeout = setTimeout(() => {
+    if (!ready) status.textContent = "Map loading is delayed. Check your connection; regional data status is available below.";
+  }, 15000);
+  map.once("style.load", () => {
+    map.addSource("ach",{type:"geojson",data:geojson,generateId:true});
+    map.addLayer({id:"ach-fill",type:"fill",source:"ach",paint:{
+      "fill-color":["case",["==",["get","estimate_percent"],null],"#a9aeab",
+        ["interpolate",["linear"],["get","estimate_percent"],0,"#f5dfb0",50,"#e4a84d",75,"#e66d55",100,"#a72f3f"]],
+      "fill-opacity":["case",["boolean",["feature-state","hover"],false],.9,.72]
+    }});
+    map.addLayer({id:"ach-outline",type:"line",source:"ach",
+      paint:{"line-color":"#fffdfa","line-width":1.5,"line-opacity":.95}});
+    let hoveredId = null;
+    const hover = new maplibregl.Popup({closeButton:false,closeOnClick:false,maxWidth:"290px"});
+    map.on("mousemove","ach-fill",event => {
+      const feature = event.features?.[0];
+      if (!feature) return;
+      map.getCanvas().style.cursor = "pointer";
+      if (hoveredId !== null) map.setFeatureState({source:"ach",id:hoveredId},{hover:false});
+      hoveredId = feature.id;
+      map.setFeatureState({source:"ach",id:hoveredId},{hover:true});
+      hover.setLngLat(event.lngLat).setHTML(popupHtml(feature.properties)).addTo(map);
+    });
+    map.on("mouseleave","ach-fill",() => {
+      map.getCanvas().style.cursor = "";
+      if (hoveredId !== null) map.setFeatureState({source:"ach",id:hoveredId},{hover:false});
+      hoveredId = null;
+      hover.remove();
+    });
+    map.on("click","ach-fill",event => {
+      hover.remove();
+      if (event.features?.[0]) new maplibregl.Popup({maxWidth:"290px"})
+        .setLngLat(event.lngLat).setHTML(popupHtml(event.features[0].properties)).addTo(map);
+    });
+    // Fit Washington at both mobile and desktop widths; preserve pan/zoom controls.
+    map.fitBounds([[-124.85,45.5],[-116.9,49.05]],{padding:35,duration:0});
+    ready = true;
+    clearTimeout(timeout);
+    status.hidden = true;
+  });
+  map.on("error",() => {
+    if (!ready) status.textContent = "The basemap could not load. Check your internet connection; regional data status is listed below.";
+  });
 }
-loadData().then(({rows,geojson,medicaid})=>{buildMap(geojson);buildChart(rows);buildMedicaidChart(medicaid)}).catch(error=>{document.getElementById("map-status").textContent="Data could not load. Open the project through Live Server rather than as a file.";document.getElementById("chart").textContent="Chart data could not load.";document.getElementById("medicaid-chart").textContent="Medicaid comparison could not load.";console.error(error)});
+function emptyState(selector, message) {
+  const container = document.querySelector(selector);
+  container.replaceChildren();
+  const note = document.createElement("p");
+  note.className = "empty-state";
+  note.textContent = message;
+  container.append(note);
+}
+function buildTable(selector, rows, key, caption) {
+  const wrap = d3.select(selector).append("div").attr("class","data-table-wrap");
+  const table = wrap.append("table").attr("class","data-table");
+  table.append("caption").text(caption);
+  const headings = ["Area / group","Period","Checkup utilization","95% CI","Reliability / status"];
+  table.append("thead").append("tr").selectAll("th").data(headings).join("th")
+    .attr("scope","col").text(d => d);
+  const body = table.append("tbody");
+  rows.forEach(row => {
+    const tr = body.append("tr");
+    tr.append("th").attr("scope","row").text(row[key]);
+    [row.period || "Not supplied",statusText(row),intervalText(row),reliabilityText(row)]
+      .forEach(value => tr.append("td").text(value));
+  });
+}
+function buildChart(selector, rows, key, title) {
+  if (!rows.length) return;
+  document.querySelector(selector).replaceChildren();
+  const visible = rows.filter(row => row.estimate_percent != null);
+  if (!visible.length) emptyState(selector,"No reportable checkup estimates. Missing and suppressed observations are listed below.");
+  else {
+    const width=980, margin={top:24,right:85,bottom:48,left:245}, rowHeight=48;
+    const height=margin.top+margin.bottom+visible.length*rowHeight;
+    const svg=d3.select(selector).append("div").attr("class","chart-scroll").append("svg")
+      .attr("viewBox",`0 0 ${width} ${height}`).attr("role","img");
+    svg.append("title").text(title);
+    const x=d3.scaleLinear().domain([0,100]).range([margin.left,width-margin.right]);
+    const y=d3.scaleBand().domain(visible.map(d=>d[key])).range([margin.top,height-margin.bottom]).padding(.42);
+    svg.append("g").attr("class","axis").attr("transform",`translate(0,${height-margin.bottom})`)
+      .call(d3.axisBottom(x).ticks(5).tickFormat(d=>`${d}%`)).call(g=>g.select(".domain").remove());
+    svg.append("g").attr("class","axis").attr("transform",`translate(${margin.left},0)`)
+      .call(d3.axisLeft(y).tickSize(0)).call(g=>g.select(".domain").remove());
+    const groups=svg.selectAll(".estimate-row").data(visible).join("g").attr("class","estimate-row");
+    groups.append("title").text(d=>`${d[key]}: ${statusText(d)}; ${intervalText(d)}; ${d.period}; ${reliabilityText(d)}`);
+    groups.filter(hasInterval).append("line")
+      .attr("x1",d=>x(d.lower_95_ci_percent)).attr("x2",d=>x(d.upper_95_ci_percent))
+      .attr("y1",d=>y(d[key])+y.bandwidth()/2).attr("y2",d=>y(d[key])+y.bandwidth()/2)
+      .attr("stroke","#244b40").attr("stroke-width",2);
+    groups.append("circle").attr("cx",d=>x(d.estimate_percent)).attr("cy",d=>y(d[key])+y.bandwidth()/2)
+      .attr("r",6).attr("fill","#e66d55").attr("stroke","#fffdfa").attr("stroke-width",2);
+    groups.append("text").attr("x",d=>x(hasInterval(d)?d.upper_95_ci_percent:d.estimate_percent)+8)
+      .attr("y",d=>y(d[key])+y.bandwidth()/2+4).attr("font-size",12)
+      .text(d=>`${percent(d.estimate_percent)}${d.reliability_flag==="*"?" *":""}`);
+  }
+  buildTable(selector,rows,key,title+" — source order; no ranking");
+}
+async function initialize() {
+  if (!window.d3) {
+    document.getElementById("map-status").textContent = "Visualization library unavailable. Check your internet connection. Checkup data have not yet been supplied.";
+    return;
+  }
+  // Load independently so one missing/malformed dataset cannot disable the others.
+  const [regional, insurance, boundaries] = await Promise.allSettled([
+    loadRows(DATA_URL,"ach_name"), loadRows(INSURANCE_URL,"coverage_group"), d3.json(GEO_URL)
+  ]);
+  let rows = regional.status === "fulfilled" ? regional.value : [];
+  const coverage = insurance.status === "fulfilled" ? insurance.value : [];
+  let regionalError = regional.status === "rejected";
+  if (boundaries.status === "fulfilled") {
+    const geojson = boundaries.value;
+    const names = new Set(geojson.features.map(f=>f.properties.ach_name));
+    if (rows.some(row=>!names.has(row.ach_name))) {
+      regionalError = true;
+      rows = [];
+    }
+    const byName = new Map(rows.map(row=>[row.ach_name,row]));
+    geojson.features.forEach(feature => {
+      Object.assign(feature.properties, {estimate_percent:null}, byName.get(feature.properties.ach_name));
+    });
+    buildMap(geojson);
+    if (!rows.length) buildTable("#chart",geojson.features.map(f=>f.properties),"ach_name","ACH boundary reference — checkup data pending");
+  } else document.getElementById("map-status").textContent = "Regional boundaries could not load. Serve this folder over HTTP and check local assets.";
+  if (regionalError) emptyState("#chart","Regional checkup data could not be validated or loaded. See data/README.md for the required fields and ACH names.");
+  else buildChart("#chart",rows,"ach_name","Maternal postpartum checkup utilization by ACH");
+  if (insurance.status === "rejected") emptyState("#insurance-chart","Insurance checkup data could not be validated or loaded. See data/README.md for the required fields.");
+  else buildChart("#insurance-chart",coverage,"coverage_group","Maternal postpartum checkup utilization by insurance group");
+  if (rows.length) {
+    document.getElementById("chart-title").textContent = "Regional checkup utilization";
+    document.querySelector(".chart-key").hidden = !rows.some(row=>row.estimate_percent!=null);
+    document.querySelector("#map-section .section-note").textContent = "Select a region for its estimate, period, confidence interval, and reliability status.";
+    document.querySelector(".map-caption").textContent = "Estimated percentage of respondents who received a maternal postpartum checkup. Gray indicates missing or suppressed estimates; select a region for its status. Boundaries represent nine ACH regions.";
+    document.getElementById("estimate-legend").hidden = !rows.some(row=>row.estimate_percent!=null);
+  }
+  if (coverage.length) {
+    document.querySelector(".context-copy strong").textContent = "Descriptive comparison";
+    document.querySelector("#insurance .section-note").textContent = `${coverage[0].geography}; ${coverage[0].period}. Coverage timing: ${coverage[0].coverage_timing}. Dots show estimates; lines show available 95% confidence intervals.`;
+  }
+  if (rows.length || coverage.length) {
+    document.getElementById("data-coverage").textContent = [
+      rows.length ? `ACH checkup period: ${rows[0].period}.` : "ACH checkup data not supplied.",
+      coverage.length ? `Insurance: ${coverage.map(row=>row.coverage_group).join(", ")}. Geography: ${coverage[0].geography}; period: ${coverage[0].period}; coverage timing: ${coverage[0].coverage_timing}.` : "Insurance checkup data not supplied."
+    ].join(" ");
+  }
+}
+initialize().catch(() => {
+  document.getElementById("map-status").hidden = false;
+  document.getElementById("map-status").textContent = "Visualizations could not initialize. Check local data files and serve the page over HTTP.";
+});
