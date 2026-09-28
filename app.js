@@ -184,13 +184,14 @@ function buildChart(selector, rows, key, title) {
         const card=summary.append("div");card.append("span").text(item[0]);card.append("strong").text(item[1]);card.append("small").text(item[2]);
       });
     }
-    const width=980, margin={top:18,right:75,bottom:44,left:compactCounty?165:245}, rowHeight=compactCounty?29:48;
+    const width=980, margin={top:compactCounty?10:18,right:75,bottom:compactCounty?36:44,left:compactCounty?175:245}, rowHeight=compactCounty?20:48;
     const height=margin.top+margin.bottom+visible.length*rowHeight;
     const svg=d3.select(selector).append("div").attr("class","chart-scroll").append("svg")
       .attr("viewBox",`0 0 ${width} ${height}`).attr("role","img");
     svg.append("title").text(title);
-    const x=d3.scaleLinear().domain([0,compactCounty?70:100]).range([margin.left,width-margin.right]);
-    const y=d3.scaleBand().domain(visible.map(d=>d[key])).range([margin.top,height-margin.bottom]).padding(.42);
+    const plotStart=margin.left+(compactCounty?20:0);
+    const x=d3.scaleLinear().domain([0,compactCounty?70:100]).range([plotStart,width-margin.right]);
+    const y=d3.scaleBand().domain(visible.map(d=>d[key])).range([margin.top,height-margin.bottom]).padding(compactCounty ? .25 : .42);
     svg.append("g").attr("class","axis").attr("transform",`translate(0,${height-margin.bottom})`)
       .call(d3.axisBottom(x).ticks(compactCounty?7:5).tickFormat(d=>`${d}%`)).call(g=>g.select(".domain").remove());
     svg.append("g").attr("class","axis").attr("transform",`translate(${margin.left},0)`)
@@ -202,9 +203,9 @@ function buildChart(selector, rows, key, title) {
       .attr("y1",d=>y(d[key])+y.bandwidth()/2).attr("y2",d=>y(d[key])+y.bandwidth()/2)
       .attr("stroke","#244b40").attr("stroke-width",2);
     groups.append("circle").attr("cx",d=>x(d.estimate_percent)).attr("cy",d=>y(d[key])+y.bandwidth()/2)
-      .attr("r",6).attr("fill","#e66d55").attr("stroke","#fffdfa").attr("stroke-width",2);
+      .attr("r",compactCounty?4.5:6).attr("fill","#e66d55").attr("stroke","#fffdfa").attr("stroke-width",compactCounty?1.5:2);
     groups.append("text").attr("x",d=>x(hasInterval(d)?d.upper_95_ci_percent:d.estimate_percent)+8)
-      .attr("y",d=>y(d[key])+y.bandwidth()/2+4).attr("font-size",12)
+      .attr("y",d=>y(d[key])+y.bandwidth()/2+(compactCounty?3.5:4)).attr("font-size",compactCounty?10.5:12)
       .text(d=>`${percent(d.estimate_percent)}${d.reliability_flag==="*"?" *":""}`);
   }
   if (compactCounty) {
