@@ -170,18 +170,29 @@ function buildTable(selector, rows, key, caption) {
 function buildChart(selector, rows, key, title) {
   if (!rows.length) return;
   document.querySelector(selector).replaceChildren();
-  const visible = rows.filter(row => row.estimate_percent != null);
+  const compactCounty = key === "county_name";
+  const visible = rows.filter(row => row.estimate_percent != null)
+    .sort((a,b)=>d3.descending(a.estimate_percent,b.estimate_percent));
   if (!visible.length) emptyState(selector,"No reportable checkup estimates. Missing and suppressed observations are listed below.");
   else {
-    const width=980, margin={top:24,right:85,bottom:48,left:245}, rowHeight=48;
+    if (compactCounty) {
+      const values=visible.map(d=>d.estimate_percent);
+      const summary=d3.select(selector).append("div").attr("class","chart-summary");
+      [["Highest",`${d3.max(values).toFixed(1)}%`,visible[0].county_name],
+       ["Median",`${d3.median(values).toFixed(1)}%`,"Reportable counties"],
+       ["Available",`${visible.length} of ${rows.length}`,"County estimates"]].forEach(item=>{
+        const card=summary.append("div");card.append("span").text(item[0]);card.append("strong").text(item[1]);card.append("small").text(item[2]);
+      });
+    }
+    const width=980, margin={top:18,right:75,bottom:44,left:compactCounty?165:245}, rowHeight=compactCounty?29:48;
     const height=margin.top+margin.bottom+visible.length*rowHeight;
     const svg=d3.select(selector).append("div").attr("class","chart-scroll").append("svg")
       .attr("viewBox",`0 0 ${width} ${height}`).attr("role","img");
     svg.append("title").text(title);
-    const x=d3.scaleLinear().domain([0,100]).range([margin.left,width-margin.right]);
+    const x=d3.scaleLinear().domain([0,compactCounty?70:100]).range([margin.left,width-margin.right]);
     const y=d3.scaleBand().domain(visible.map(d=>d[key])).range([margin.top,height-margin.bottom]).padding(.42);
     svg.append("g").attr("class","axis").attr("transform",`translate(0,${height-margin.bottom})`)
-      .call(d3.axisBottom(x).ticks(5).tickFormat(d=>`${d}%`)).call(g=>g.select(".domain").remove());
+      .call(d3.axisBottom(x).ticks(compactCounty?7:5).tickFormat(d=>`${d}%`)).call(g=>g.select(".domain").remove());
     svg.append("g").attr("class","axis").attr("transform",`translate(${margin.left},0)`)
       .call(d3.axisLeft(y).tickSize(0)).call(g=>g.select(".domain").remove());
     const groups=svg.selectAll(".estimate-row").data(visible).join("g").attr("class","estimate-row");
@@ -196,7 +207,12 @@ function buildChart(selector, rows, key, title) {
       .attr("y",d=>y(d[key])+y.bandwidth()/2+4).attr("font-size",12)
       .text(d=>`${percent(d.estimate_percent)}${d.reliability_flag==="*"?" *":""}`);
   }
-  buildTable(selector,rows,key,title+" — source order; no ranking");
+  if (compactCounty) {
+    const suppressed=rows.filter(row=>row.estimate_percent==null).map(row=>row.county_name).sort();
+    const details=d3.select(selector).append("details").attr("class","suppressed-summary");
+    details.append("summary").text(`${suppressed.length} counties unavailable because source components were suppressed`);
+    details.append("p").text(suppressed.join(" · "));
+  } else buildTable(selector,rows,key,title+" — source order; no ranking");
 }
 function buildMedicaidTrend(rows) {
   const container=d3.select("#insurance-chart");container.selectAll("*").remove();
