@@ -1,10 +1,10 @@
 // The templates deliberately contain headers only. Supply verified Washington
 // PRAMS checkup data following data/README.md; never reuse another outcome.
-const DATA_URL = "data/processed/postpartum_checkup_ach.csv";
+const DATA_URL = "data/processed/wa_county_postpartum_mss_2024.csv";
 const INSURANCE_URL = "data/processed/postpartum_checkup_insurance.csv";
 const CMS_MEDICAID_URL = "data/processed/cms_wa_medicaid_postpartum_visits_2018_2022.csv";
-const GEO_URL = "data/processed/wa_ach_boundaries.geojson";
-const OUTCOME = "Had maternal postpartum checkup";
+const GEO_URL = "data/raw/wa_counties.geojson";
+const OUTCOME = "Received postpartum Maternity Support Services";
 const escapeHtml = value => String(value ?? "").replace(/[&<>'"]/g, c =>
   ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"})[c]);
 const percent = value => value == null ? "Not available" : `${value.toFixed(1)}%`;
@@ -75,11 +75,11 @@ async function loadRows(url, key) {
   return rows;
 }
 function popupHtml(row) {
-  return `<div class="popup-region"><div class="popup-kicker">Accountable Community of Health</div>
-    <h3>${escapeHtml(row.ach_name)}</h3><div class="popup-estimate">${escapeHtml(statusText(row))}</div>
+  return `<div class="popup-region"><div class="popup-kicker">Washington county · 2024</div>
+    <h3>${escapeHtml(row.county_name)}</h3><div class="popup-estimate">${escapeHtml(statusText(row))}</div>
     <div class="popup-meta">Period: ${escapeHtml(row.period || "Not supplied")}<br>
     ${escapeHtml(intervalText(row))}<br>${escapeHtml(reliabilityText(row))}</div>
-    <div class="popup-counties"><strong>Counties:</strong> ${escapeHtml(row.counties)}</div></div>`;
+    <div class="popup-counties"><strong>Postpartum MSS clients:</strong> ${escapeHtml(row.postpartum_mss_count || "Suppressed")}<br><strong>Medicaid perinatal population:</strong> ${escapeHtml(row.medicaid_perinatal_count || "Suppressed")}</div></div>`;
 }
 function buildMap(geojson) {
   const status = document.getElementById("map-status");
@@ -107,7 +107,7 @@ function buildMap(geojson) {
     map.addSource("ach",{type:"geojson",data:geojson,generateId:true});
     map.addLayer({id:"ach-fill",type:"fill",source:"ach",paint:{
       "fill-color":["case",["==",["get","estimate_percent"],null],"#a9aeab",
-        ["interpolate",["linear"],["get","estimate_percent"],0,"#f5dfb0",50,"#e4a84d",75,"#e66d55",100,"#a72f3f"]],
+        ["interpolate",["linear"],["get","estimate_percent"],0,"#f5dfb0",35,"#e4a84d",55,"#e66d55",70,"#a72f3f"]],
       "fill-opacity":["case",["boolean",["feature-state","hover"],false],.9,.72]
     }});
     map.addLayer({id:"ach-outline",type:"line",source:"ach",
@@ -221,34 +221,34 @@ async function initialize() {
   }
   // Load independently so one missing/malformed dataset cannot disable the others.
   const [regional, insurance, boundaries, medicaidTrend] = await Promise.allSettled([
-    loadRows(DATA_URL,"ach_name"), loadRows(INSURANCE_URL,"coverage_group"), d3.json(GEO_URL), d3.csv(CMS_MEDICAID_URL,d3.autoType)
+    loadRows(DATA_URL,"county_name"), loadRows(INSURANCE_URL,"coverage_group"), d3.json(GEO_URL), d3.csv(CMS_MEDICAID_URL,d3.autoType)
   ]);
   let rows = regional.status === "fulfilled" ? regional.value : [];
   const coverage = insurance.status === "fulfilled" ? insurance.value : [];
   let regionalError = regional.status === "rejected";
   if (boundaries.status === "fulfilled") {
     const geojson = boundaries.value;
-    const names = new Set(geojson.features.map(f=>f.properties.ach_name));
-    if (rows.some(row=>!names.has(row.ach_name))) {
+    geojson.features.forEach(feature=>feature.properties.county_name=feature.properties.JURLBL);
+    const names = new Set(geojson.features.map(f=>f.properties.county_name));
+    if (rows.some(row=>!names.has(row.county_name))) {
       regionalError = true;
       rows = [];
     }
-    const byName = new Map(rows.map(row=>[row.ach_name,row]));
+    const byName = new Map(rows.map(row=>[row.county_name,row]));
     geojson.features.forEach(feature => {
-      Object.assign(feature.properties, {estimate_percent:null}, byName.get(feature.properties.ach_name));
+      Object.assign(feature.properties, {estimate_percent:null}, byName.get(feature.properties.county_name));
     });
     buildMap(geojson);
-    if (!rows.length) buildTable("#chart",geojson.features.map(f=>f.properties),"ach_name","ACH boundary reference — checkup data pending");
+    if (!rows.length) buildTable("#chart",geojson.features.map(f=>f.properties),"county_name","County data unavailable");
   } else document.getElementById("map-status").textContent = "Regional boundaries could not load. Serve this folder over HTTP and check local assets.";
   if (regionalError) emptyState("#chart","Regional checkup data could not be validated or loaded. See data/README.md for the required fields and ACH names.");
-  else buildChart("#chart",rows,"ach_name","Maternal postpartum checkup utilization by ACH");
+  else buildChart("#chart",rows,"county_name","Postpartum Maternity Support Services utilization by county");
   if (medicaidTrend.status === "fulfilled" && medicaidTrend.value.length) buildMedicaidTrend(medicaidTrend.value);
   else emptyState("#insurance-chart","CMS Medicaid postpartum-visit data could not be loaded.");
   if (rows.length) {
-    document.getElementById("chart-title").textContent = "Regional checkup utilization";
+    document.getElementById("chart-title").textContent = "Reported postpartum MSS utilization";
     document.querySelector(".chart-key").hidden = !rows.some(row=>row.estimate_percent!=null);
-    document.querySelector("#map-section .section-note").textContent = "Select a region for its estimate, period, confidence interval, and reliability status.";
-    document.querySelector(".map-caption").textContent = "Estimated percentage of respondents who received a maternal postpartum checkup. Gray indicates missing or suppressed estimates; select a region for its status. Boundaries represent nine ACH regions.";
+    document.querySelector("#map-section .section-note").textContent = "Select a county for its 2024 estimate, counts, or suppression status.";
     document.getElementById("estimate-legend").hidden = !rows.some(row=>row.estimate_percent!=null);
   }
   if (coverage.length) {

@@ -1,0 +1,40 @@
+indicator,county_name,period,estimate_percent,postpartum_mss_count,medicaid_perinatal_count,lower_95_ci_percent,upper_95_ci_percent,reliability_flag,suppression_status,reliability_note,data_source,source_url
+Received postpartum Maternity Support Services,Adams,2024,,,292,,,**,suppressed,Components suppressed by source,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,Asotin,2024,0.0,0,18,,,,reported,,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,Benton,2024,18.2,276,1513,,,,reported,,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,Chelan,2024,,,489,,,**,suppressed,Components suppressed by source,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,Clallam,2024,62.5,183,293,,,,reported,,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,Clark,2024,17.9,406,2268,,,,reported,,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,Columbia,2024,0.0,0,20,,,,reported,,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,Cowlitz,2024,39.3,234,596,,,,reported,,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,Douglas,2024,,,304,,,**,suppressed,Components suppressed by source,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,Ferry,2024,0.0,0,52,,,,reported,,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,Franklin,2024,27.2,271,998,,,,reported,,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,Garfield,2024,,,,,,**,suppressed,Source suppressed,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,Grant,2024,45.3,515,1138,,,,reported,,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,Grays Harbor,2024,8.8,40,456,,,,reported,,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,Island,2024,,,246,,,**,suppressed,Components suppressed by source,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,Jefferson,2024,,,68,,,**,suppressed,Components suppressed by source,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,King,2024,25.3,2038,8058,,,,reported,,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,Kitsap,2024,7.9,72,916,,,,reported,,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,Kittitas,2024,,,178,,,**,suppressed,Components suppressed by source,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,Klickitat,2024,,,31,,,**,suppressed,Components suppressed by source,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,Lewis,2024,8.1,45,556,,,,reported,,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,Lincoln,2024,,,68,,,**,suppressed,Components suppressed by source,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,Mason,2024,,,386,,,**,suppressed,Components suppressed by source,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,Okanogan,2024,,,274,,,**,suppressed,Components suppressed by source,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,Pacific,2024,,,56,,,**,suppressed,Components suppressed by source,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,Pend Oreille,2024,,,67,,,**,suppressed,Components suppressed by source,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,Pierce,2024,44.4,2102,4739,,,,reported,,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,San Juan,2024,,,45,,,**,suppressed,Components suppressed by source,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,Skagit,2024,30.7,230,750,,,,reported,,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,Skamania,2024,0.0,0,20,,,,reported,,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,Snohomish,2024,10.5,377,3590,,,,reported,,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,Spokane,2024,16.7,517,3098,,,,reported,,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,Stevens,2024,,,300,,,**,suppressed,Components suppressed by source,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,Thurston,2024,17.7,212,1201,,,,reported,,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,Wahkiakum,2024,,,,,,**,suppressed,Source suppressed,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,Walla Walla,2024,26.2,84,321,,,,reported,,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,Whatcom,2024,29.1,281,966,,,,reported,,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,Whitman,2024,,,131,,,**,suppressed,Components suppressed by source,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf
+Received postpartum Maternity Support Services,Yakima,2024,67.6,1789,2645,,,,reported,,Washington Health Care Authority,https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf

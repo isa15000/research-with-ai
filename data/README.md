@@ -16,6 +16,8 @@ No original dataset was deleted or overwritten. The site loads the checkup templ
 ## Added relevant utilization data
 
 - `processed/cms_wa_medicaid_postpartum_visits_2018_2022.csv`: 60 monthly Washington observations for postpartum visits among female Medicaid and CHIP beneficiaries ages 15–44. The measure is a service rate per 1,000 beneficiaries, not the percentage of postpartum people receiving a checkup. Source: CMS T-MSIS Analytic Files.
+- `processed/wa_county_postpartum_mss_2024.csv`: county-level percentage of people with Medicaid-paid perinatal care who received MSS after delivery. Derived as HCA “before and after delivery” plus “after delivery only” counts divided by the Medicaid perinatal population. Required suppressed components produce a suppressed county estimate.
+- `raw/wa_hca_mss_postpartum_county_2024.pdf`: unmodified Washington HCA source report used for the county calculation.
 - Washington's Title V action plan reports that 91% of mothers attended a postpartum visit within 12 weeks in 2023, based on PRAMS. This statewide benchmark is shown on the page but cannot populate ACH regions or an insurance comparison.
 
 ## Exactly what to obtain

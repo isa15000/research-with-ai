@@ -12,7 +12,7 @@
   <a class="skip-link" href="#main">Skip to main content</a>
   <header class="site-header">
     <a class="brand" href="#top"><span class="brand-mark"></span>After Birth, Across Washington</a>
-    <nav aria-label="Page sections"><a href="#map-section">Map</a><a href="#comparison">Compare</a><a href="#insurance">Insurance</a><a href="#methods">Methods</a></nav>
+    <nav aria-label="Page sections"><a href="#map-section">Map</a><a href="#comparison">Counties</a><a href="#insurance">Medicaid</a><a href="#methods">Methods</a></nav>
   </header>
   <main id="main">
     <section class="hero" id="top">
@@ -22,7 +22,7 @@
       <div class="hero-actions"><a class="button primary" href="#map-section">Explore the map</a><a class="button secondary" href="#methods">Read the methods</a></div>
       <div class="stat-row" aria-label="Study summary">
         <div class="stat"><span class="stat-value">91%</span><span class="stat-label">Attended a postpartum visit within 12 weeks, 2023</span></div>
-        <div class="stat"><span class="stat-value">9</span><span class="stat-label">ACH boundaries available</span></div>
+        <div class="stat"><span class="stat-value">39</span><span class="stat-label">County boundaries matched</span></div>
         <div class="stat"><span class="stat-value">60 months</span><span class="stat-label">Medicaid service records, 2018–2022</span></div>
       </div>
     </section>
@@ -31,17 +31,17 @@
       <p>Healthcare utilization means using healthcare services. Here, the primary measure is whether a respondent received a maternal postpartum checkup. A checkup measures one aspect of utilization; it does not capture all access to care or its quality.</p>
     </section>
     <section class="map-section" id="map-section" aria-labelledby="map-title">
-      <div class="section-heading"><div><p class="section-kicker">Geographic pattern</p><h2 id="map-title">Postpartum checkups across health regions</h2></div><p class="section-note">ACH boundaries are available; geographic checkup estimates are missing. Select a region to see its data status and counties.</p></div>
+      <div class="section-heading"><div><p class="section-kicker">Geographic pattern</p><h2 id="map-title">Postpartum support-service use by county</h2></div><p class="section-note">Select a county to see its 2024 Medicaid postpartum MSS estimate, numerator, denominator, or suppression status.</p></div>
       <div class="map-card">
-        <div id="map" role="application" aria-label="Washington ACH geography; postpartum checkup estimates pending"></div>
-        <div id="map-status" class="loading-note" role="status">Loading regional boundaries…</div>
-        <div class="map-legend"><div class="legend-title">Maternal postpartum checkup</div><div id="estimate-legend" hidden><div class="legend-scale"></div><div class="legend-labels"><span>0%</span><span>50%</span><span>100%</span></div></div><div class="legend-missing"><span></span>Missing or suppressed</div></div>
+        <div id="map" role="application" aria-label="County map of postpartum Maternity Support Services use among Washington Medicaid perinatal clients"></div>
+        <div id="map-status" class="loading-note" role="status">Loading county data…</div>
+        <div class="map-legend"><div class="legend-title">Received postpartum MSS</div><div id="estimate-legend"><div class="legend-scale"></div><div class="legend-labels"><span>0%</span><span>35%</span><span>70%</span></div></div><div class="legend-missing"><span></span>Suppressed</div></div>
       </div>
-      <p class="map-caption">Planned measure: estimated percentage of respondents who received a maternal postpartum checkup. Gray currently means checkup data have not been supplied, not zero utilization or source suppression. The nine ACH boundaries are retained for orientation; county-level checkup estimates are not available.</p>
+      <p class="map-caption">Percentage of people with Medicaid-paid perinatal care who received Maternity Support Services after delivery, 2024. Calculated from HCA counts as “before and after delivery” plus “after delivery only,” divided by all Medicaid-paid perinatal-care individuals. Gray indicates source suppression. MSS is an enhanced support program, not a standard postpartum checkup.</p>
     </section>
     <section class="comparison-section" id="comparison" aria-labelledby="chart-title">
-      <div class="section-heading"><div><p class="section-kicker">Regional comparison</p><h2 id="chart-title">Regional estimates: awaiting checkup data</h2></div><p class="section-note">When data are available, dots will show estimates and lines will show available 95% confidence intervals.</p></div>
-      <div class="chart-card"><div id="chart" aria-label="Regional postpartum checkup estimates"><p class="empty-state">Geographic checkup estimates are not available. Washington PRAMS estimates by ACH, with years and uncertainty, are needed before regional patterns can be shown.</p></div><div class="chart-key" hidden><span><i class="dot-key"></i>Estimate</span><span><i class="line-key"></i>95% confidence interval</span><span><b>*</b> Wide interval; interpret cautiously</span></div></div>
+      <div class="section-heading"><div><p class="section-kicker">County comparison</p><h2 id="chart-title">Reported postpartum MSS utilization</h2></div><p class="section-note">Dots show derived percentages for counties with complete published component counts. Suppressed counties remain listed as unavailable.</p></div>
+      <div class="chart-card"><div id="chart" aria-label="County postpartum Maternity Support Services estimates"></div><div class="chart-key"><span><i class="dot-key"></i>Derived estimate</span><span>Source: Washington HCA, 2024</span></div></div>
     </section>
     <section class="insurance-section" id="insurance" aria-labelledby="insurance-title">
       <div class="section-heading"><div><p class="section-kicker">Medicaid utilization</p><h2 id="insurance-title">Monthly postpartum visits among Medicaid and CHIP beneficiaries</h2></div><p class="section-note">CMS administrative records, Washington, 2018–2022. Rate per 1,000 female beneficiaries ages 15–44.</p></div>
@@ -60,7 +60,8 @@
       <div class="methods-intro"><p class="section-kicker">Data &amp; methods</p><h2 id="methods-title">A descriptive, exploratory study</h2><p>Washington’s Title V action plan supplies the 2023 PRAMS benchmark. CMS T-MSIS data supply monthly Medicaid and CHIP postpartum-service rates for 2018–2022. The local Perinatal Dashboard workbook contains no ACH-level maternal postpartum-checkup measure.</p></div>
       <div class="methods-details">
         <details open><summary>Population and primary outcome</summary><p>People who recently had a live birth and participated in PRAMS. The requested outcome is “Had maternal postpartum checkup.” Confirm the exact question, denominator, recall window, and survey weighting in the supplied source before adding estimates.</p></details>
-        <details><summary>Geography, insurance, and years</summary><p id="data-coverage">The map retains nine ACH boundaries only. Checkup estimates by ACH, insurance categories, insurance coverage timing, and study years have not been supplied. Existing data for a different outcome do not establish availability for this measure.</p></details>
+        <details><summary>Geography, insurance, and years</summary><p id="data-coverage">The county map represents 2024 Maternity Support Services utilization among people with Medicaid-paid perinatal care. The separate PRAMS benchmark is statewide for 2023, and the CMS trend is statewide for 2018–2022.</p></details>
+        <details><summary>Mapped measure</summary><p>The county percentage is derived from HCA’s published counts: clients receiving MSS both before and after delivery plus clients receiving MSS only after delivery, divided by all individuals with Medicaid-paid perinatal care. Counties with any required suppressed component are not calculated. MSS includes preventive health and education services and is not equivalent to a routine postpartum medical checkup.</p></details>
         <details><summary>Estimates and uncertainty</summary><p>PRAMS percentages are survey estimates where applicable. Display source-provided 95% confidence intervals and reliability notes. Missing and suppressed observations remain unavailable, never zero. Correlation and group differences do not establish causation.</p></details>
         <details><summary>Medicaid service series</summary><p>CMS reports monthly postpartum visits and rates per 1,000 female Medicaid and CHIP beneficiaries ages 15–44. This claims-based service rate is not a percentage of postpartum respondents and has no private-insurance comparison. CMS flags unusable cells as DQ and small cells as DS; none of the selected Washington rows carried those flags.</p></details>
         <details><summary>Data still needed</summary><p>ACH-level PRAMS postpartum-visit estimates and a comparable outcome by insurance group are still needed to answer the geographic and insurance comparison directly. Include weighted percentages, confidence intervals, suppression notes, period, and coverage timing. See the <a href="data/README.md">data requirements</a>.</p></details>
@@ -76,6 +77,7 @@
       <div class="source-list">
         <a href="https://mchb.tvisdata.hrsa.gov/Narratives/PlanForTheApplicationYear1/7a66b08a-cdf4-4989-9629-00fe29aa0244" target="_blank" rel="noopener"><span>2023 statewide benchmark</span><strong>Washington Title V Action Plan ↗</strong></a>
         <a href="https://data.medicaid.gov/dataset/ed67e610-aed3-4bed-842f-e6044511dd64" target="_blank" rel="noopener"><span>Medicaid service data</span><strong>CMS T-MSIS Perinatal Care ↗</strong></a>
+        <a href="https://www.hca.wa.gov/assets/program/mss-icm-county-suppressed.pdf" target="_blank" rel="noopener"><span>County map data</span><strong>Washington HCA Postpartum MSS ↗</strong></a>
         <a href="https://jamanetwork.com/journals/jama-health-forum/fullarticle/2797463" target="_blank" rel="noopener"><span>Interrante et al. (2022)</span><strong>Association of Health Insurance, Geography, and Race and Ethnicity With Disparities in Receipt of Recommended Postpartum Care in the US ↗</strong></a>
         <a href="https://jamanetwork.com/journals/jamanetworkopen/fullarticle/2805510" target="_blank" rel="noopener"><span>Saldanha et al. (2023)</span><strong>Health Insurance Coverage and Postpartum Outcomes in the US: A Systematic Review ↗</strong></a>
         <a href="https://doh.wa.gov/data-and-statistical-reports/washington-tracking-network-wtn/perinatal-data/dashboard" target="_blank" rel="noopener"><span>Health data</span><strong>Washington DOH Perinatal Dashboard ↗</strong></a>
