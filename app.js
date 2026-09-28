@@ -152,6 +152,69 @@ function emptyState(selector, message) {
   note.textContent = message;
   container.append(note);
 }
+function buildTable(selector, rows, key, caption) {
+  const wrap = d3.select(selector).append("div").attr("class","data-table-wrap");
+  const table = wrap.append("table").attr("class","data-table");
+  table.append("caption").text(caption);
+  const headings = ["Area / group","Period","Checkup utilization","95% CI","Reliability / status"];
+  table.append("thead").append("tr").selectAll("th").data(headings).join("th")
+    .attr("scope","col").text(d => d);
+  const body = table.append("tbody");
+  rows.forEach(row => {
+    const tr = body.append("tr");
+    tr.append("th").attr("scope","row").text(row[key]);
+    [row.period || "Not supplied",statusText(row),intervalText(row),reliabilityText(row)]
+      .forEach(value => tr.append("td").text(value));
+  });
+}
+function buildChart(selector, rows, key, title) {
+  if (!rows.length) return;
+  document.querySelector(selector).replaceChildren();
+  const compactCounty = key === "county_name";
+  const visible = rows.filter(row => row.estimate_percent != null)
+    .sort((a,b)=>d3.descending(a.estimate_percent,b.estimate_percent));
+  if (!visible.length) emptyState(selector,"No reportable checkup estimates. Missing and suppressed observations are listed below.");
+  else {
+    if (compactCounty) {
+      const values=visible.map(d=>d.estimate_percent);
+      const summary=d3.select(selector).append("div").attr("class","chart-summary");
+      [["Highest",`${d3.max(values).toFixed(1)}%`,visible[0].county_name],
+       ["Median",`${d3.median(values).toFixed(1)}%`,"Reportable counties"],
+       ["Available",`${visible.length} of ${rows.length}`,"County estimates"]].forEach(item=>{
+        const card=summary.append("div");card.append("span").text(item[0]);card.append("strong").text(item[1]);card.append("small").text(item[2]);
+      });
+    }
+    const width=980, margin={top:compactCounty?10:18,right:75,bottom:compactCounty?36:44,left:compactCounty?175:245}, rowHeight=compactCounty?20:48;
+    const height=margin.top+margin.bottom+visible.length*rowHeight;
+    const svg=d3.select(selector).append("div").attr("class","chart-scroll").append("svg")
+      .attr("viewBox",`0 0 ${width} ${height}`).attr("role","img");
+    svg.append("title").text(title);
+    const plotStart=margin.left+(compactCounty?20:0);
+    const x=d3.scaleLinear().domain([0,compactCounty?70:100]).range([plotStart,width-margin.right]);
+    const y=d3.scaleBand().domain(visible.map(d=>d[key])).range([margin.top,height-margin.bottom]).padding(compactCounty ? .25 : .42);
+    svg.append("g").attr("class","axis").attr("transform",`translate(0,${height-margin.bottom})`)
+      .call(d3.axisBottom(x).ticks(compactCounty?7:5).tickFormat(d=>`${d}%`)).call(g=>g.select(".domain").remove());
+    svg.append("g").attr("class","axis").attr("transform",`translate(${margin.left},0)`)
+      .call(d3.axisLeft(y).tickSize(0)).call(g=>g.select(".domain").remove());
+    const groups=svg.selectAll(".estimate-row").data(visible).join("g").attr("class","estimate-row");
+    groups.append("title").text(d=>`${d[key]}: ${statusText(d)}; ${intervalText(d)}; ${d.period}; ${reliabilityText(d)}`);
+    groups.filter(hasInterval).append("line")
+      .attr("x1",d=>x(d.lower_95_ci_percent)).attr("x2",d=>x(d.upper_95_ci_percent))
+      .attr("y1",d=>y(d[key])+y.bandwidth()/2).attr("y2",d=>y(d[key])+y.bandwidth()/2)
+      .attr("stroke","#244b40").attr("stroke-width",2);
+    groups.append("circle").attr("cx",d=>x(d.estimate_percent)).attr("cy",d=>y(d[key])+y.bandwidth()/2)
+      .attr("r",compactCounty?4.5:6).attr("fill","#e66d55").attr("stroke","#fffdfa").attr("stroke-width",compactCounty?1.5:2);
+    groups.append("text").attr("x",d=>x(hasInterval(d)?d.upper_95_ci_percent:d.estimate_percent)+8)
+      .attr("y",d=>y(d[key])+y.bandwidth()/2+(compactCounty?3.5:4)).attr("font-size",compactCounty?10.5:12)
+      .text(d=>`${percent(d.estimate_percent)}${d.reliability_flag==="*"?" *":""}`);
+  }
+  if (compactCounty) {
+    const suppressed=rows.filter(row=>row.estimate_percent==null).map(row=>row.county_name).sort();
+    const details=d3.select(selector).append("details").attr("class","suppressed-summary");
+    details.append("summary").text(`${suppressed.length} counties unavailable because source components were suppressed`);
+    details.append("p").text(suppressed.join(" · "));
+  } else buildTable(selector,rows,key,title+" — source order; no ranking");
+}
 function buildMedicaidTrend(rows) {
   const container=d3.select("#insurance-chart");container.selectAll("*").remove();
   const parseMonth=d3.timeParse("%Y-%m");
@@ -179,11 +242,13 @@ async function initialize() {
   ]);
   let rows = regional.status === "fulfilled" ? regional.value : [];
   const coverage = insurance.status === "fulfilled" ? insurance.value : [];
+  let regionalError = regional.status === "rejected";
   if (boundaries.status === "fulfilled") {
     const geojson = boundaries.value;
     geojson.features.forEach(feature=>feature.properties.county_name=feature.properties.JURLBL);
     const names = new Set(geojson.features.map(f=>f.properties.county_name));
     if (rows.some(row=>!names.has(row.county_name))) {
+      regionalError = true;
       rows = [];
     }
     const byName = new Map(rows.map(row=>[row.county_name,row]));
@@ -191,10 +256,15 @@ async function initialize() {
       Object.assign(feature.properties, {estimate_percent:null}, byName.get(feature.properties.county_name));
     });
     buildMap(geojson);
+    if (!rows.length) buildTable("#chart",geojson.features.map(f=>f.properties),"county_name","County data unavailable");
   } else document.getElementById("map-status").textContent = "Regional boundaries could not load. Serve this folder over HTTP and check local assets.";
+  if (regionalError) emptyState("#chart","Regional checkup data could not be validated or loaded. See data/README.md for the required fields and ACH names.");
+  else buildChart("#chart",rows,"county_name","Postpartum Maternity Support Services utilization by county");
   if (medicaidTrend.status === "fulfilled" && medicaidTrend.value.length) buildMedicaidTrend(medicaidTrend.value);
   else emptyState("#insurance-chart","CMS Medicaid postpartum-visit data could not be loaded.");
   if (rows.length) {
+    document.getElementById("chart-title").textContent = "Reported postpartum MSS utilization";
+    document.querySelector(".chart-key").hidden = !rows.some(row=>row.estimate_percent!=null);
     document.querySelector("#map-section .section-note").textContent = "Select a county for its 2024 estimate, counts, or suppression status.";
     document.getElementById("estimate-legend").hidden = !rows.some(row=>row.estimate_percent!=null);
   }
@@ -204,7 +274,7 @@ async function initialize() {
   }
   if (rows.length || coverage.length) {
     document.getElementById("data-coverage").textContent = [
-      rows.length ? `County MSS period: ${rows[0].period}.` : "County MSS data not supplied.",
+      rows.length ? `ACH checkup period: ${rows[0].period}.` : "ACH checkup data not supplied.",
       coverage.length ? `Insurance: ${coverage.map(row=>row.coverage_group).join(", ")}. Geography: ${coverage[0].geography}; period: ${coverage[0].period}; coverage timing: ${coverage[0].coverage_timing}.` : "Insurance checkup data not supplied."
     ].join(" ");
   }
