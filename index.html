@@ -16,14 +16,14 @@
   </header>
   <main id="main">
     <section class="hero" id="top">
-      <div class="eyebrow">Washington State · Research in progress</div>
+      <div class="eyebrow">Washington State · 2023 statewide estimate</div>
       <h1>Postpartum Healthcare Utilization Across Washington State</h1>
-      <p class="hero-copy">Exploring receipt of a maternal postpartum checkup across geographic and insurance groups. Checkup estimates are not yet available in this repository.</p>
+      <p class="hero-copy">Exploring receipt of postpartum care across geographic and insurance groups using a statewide PRAMS benchmark, Medicaid service trends, and regional data gaps.</p>
       <div class="hero-actions"><a class="button primary" href="#map-section">Explore the map</a><a class="button secondary" href="#methods">Read the methods</a></div>
       <div class="stat-row" aria-label="Study summary">
-        <div class="stat"><span class="stat-value">Checkup</span><span class="stat-label">Primary utilization measure</span></div>
+        <div class="stat"><span class="stat-value">91%</span><span class="stat-label">Attended a postpartum visit within 12 weeks, 2023</span></div>
         <div class="stat"><span class="stat-value">9</span><span class="stat-label">ACH boundaries available</span></div>
-        <div class="stat"><span class="stat-value">Pending</span><span class="stat-label">Checkup data and study years</span></div>
+        <div class="stat"><span class="stat-value">60 months</span><span class="stat-label">Medicaid service records, 2018–2022</span></div>
       </div>
     </section>
     <section class="research-strip" aria-labelledby="question-title">
@@ -44,25 +44,26 @@
       <div class="chart-card"><div id="chart" aria-label="Regional postpartum checkup estimates"><p class="empty-state">Geographic checkup estimates are not available. Washington PRAMS estimates by ACH, with years and uncertainty, are needed before regional patterns can be shown.</p></div><div class="chart-key" hidden><span><i class="dot-key"></i>Estimate</span><span><i class="line-key"></i>95% confidence interval</span><span><b>*</b> Wide interval; interpret cautiously</span></div></div>
     </section>
     <section class="insurance-section" id="insurance" aria-labelledby="insurance-title">
-      <div class="section-heading"><div><p class="section-kicker">Insurance comparison</p><h2 id="insurance-title">Postpartum checkup utilization by insurance group</h2></div><p class="section-note">Source-defined insurance categories and their checkup estimates are needed before a comparison can be shown.</p></div>
+      <div class="section-heading"><div><p class="section-kicker">Medicaid utilization</p><h2 id="insurance-title">Monthly postpartum visits among Medicaid and CHIP beneficiaries</h2></div><p class="section-note">CMS administrative records, Washington, 2018–2022. Rate per 1,000 female beneficiaries ages 15–44.</p></div>
       <div class="insurance-layout">
-        <div id="insurance-chart" class="insurance-chart" aria-label="Postpartum checkup estimates by insurance group"><p class="empty-state">Insurance-specific checkup data are not available. No coverage groups or percentages have been assumed.</p></div>
-        <div class="context-copy"><strong>Comparison pending</strong><p>Use the exact insurance categories and coverage timing defined by the checkup source. Differences between groups would be descriptive associations, not evidence of causation.</p></div>
+        <div id="insurance-chart" class="insurance-chart" aria-label="Monthly Washington Medicaid postpartum visit rates"><p class="empty-state">Loading Medicaid postpartum-visit data…</p></div>
+        <div class="context-copy"><strong>91%</strong><p>Washington reports that 91% of mothers attended a postpartum visit within 12 weeks in 2023, based on PRAMS. The line chart is a different measure: billed postpartum visits per 1,000 female Medicaid and CHIP beneficiaries—not the percentage of postpartum people receiving care.</p></div>
       </div>
     </section>
     <section class="finding-grid" id="interpretation" aria-labelledby="reading-title">
       <article class="finding-lead"><p class="section-kicker">What patterns may suggest</p><h2 id="reading-title">Questions for investigation</h2></article>
       <article><span class="number">01</span><h3>Descriptive comparisons</h3><p>Geographic and insurance patterns are descriptive. Differences between groups do not establish that insurance coverage or geographic location causes differences in postpartum healthcare utilization. Other factors, including provider availability, transportation, income, health needs, and other barriers to care, may contribute.</p></article>
-      <article><span class="number">02</span><h3>Keep the levels distinct</h3><p>No joint geography-by-insurance checkup data are available. Separate regional and statewide insurance summaries cannot be directly combined to explain one another.</p></article>
-      <article><span class="number">03</span><h3>Evidence before findings</h3><p>There are no checkup estimates to interpret yet. Once available, patterns may identify disparities deserving further investigation. Confidence intervals and reliability flags must inform any comparison; regions will not be ranked as best or worst.</p></article>
+      <article><span class="number">02</span><h3>Keep the measures distinct</h3><p>The 91% PRAMS indicator measures people receiving a visit; the CMS series measures billed services relative to all female Medicaid and CHIP beneficiaries ages 15–44. They provide complementary context but are not directly comparable.</p></article>
+      <article><span class="number">03</span><h3>A documented disruption</h3><p>The Medicaid service rate drops sharply in April 2020, consistent with pandemic-era disruption. Later values recover but remain below most 2018–2019 months. This describes service volume, not individual continuity or quality of care.</p></article>
     </section>
     <section class="methods" id="methods" aria-labelledby="methods-title">
-      <div class="methods-intro"><p class="section-kicker">Data &amp; methods</p><h2 id="methods-title">A descriptive, exploratory study</h2><p>The intended primary source is Washington PRAMS / Washington State Department of Health. The local Perinatal Dashboard workbook was inspected and contains no maternal postpartum-checkup variable. No checkup study years or estimates are currently represented.</p></div>
+      <div class="methods-intro"><p class="section-kicker">Data &amp; methods</p><h2 id="methods-title">A descriptive, exploratory study</h2><p>Washington’s Title V action plan supplies the 2023 PRAMS benchmark. CMS T-MSIS data supply monthly Medicaid and CHIP postpartum-service rates for 2018–2022. The local Perinatal Dashboard workbook contains no ACH-level maternal postpartum-checkup measure.</p></div>
       <div class="methods-details">
         <details open><summary>Population and primary outcome</summary><p>People who recently had a live birth and participated in PRAMS. The requested outcome is “Had maternal postpartum checkup.” Confirm the exact question, denominator, recall window, and survey weighting in the supplied source before adding estimates.</p></details>
         <details><summary>Geography, insurance, and years</summary><p id="data-coverage">The map retains nine ACH boundaries only. Checkup estimates by ACH, insurance categories, insurance coverage timing, and study years have not been supplied. Existing data for a different outcome do not establish availability for this measure.</p></details>
         <details><summary>Estimates and uncertainty</summary><p>PRAMS percentages are survey estimates where applicable. Display source-provided 95% confidence intervals and reliability notes. Missing and suppressed observations remain unavailable, never zero. Correlation and group differences do not establish causation.</p></details>
-        <details><summary>Data still needed</summary><p>Obtain Washington DOH / PRAMS “Had maternal postpartum checkup” estimates by ACH and separately by source-defined insurance group for a comparable period. Include weighted percentages, 95% confidence intervals where available, suppression and reliability notes, and documentation of coverage timing. See the <a href="data/README.md">data requirements and CSV fields</a>.</p></details>
+        <details><summary>Medicaid service series</summary><p>CMS reports monthly postpartum visits and rates per 1,000 female Medicaid and CHIP beneficiaries ages 15–44. This claims-based service rate is not a percentage of postpartum respondents and has no private-insurance comparison. CMS flags unusable cells as DQ and small cells as DS; none of the selected Washington rows carried those flags.</p></details>
+        <details><summary>Data still needed</summary><p>ACH-level PRAMS postpartum-visit estimates and a comparable outcome by insurance group are still needed to answer the geographic and insurance comparison directly. Include weighted percentages, confidence intervals, suppression notes, period, and coverage timing. See the <a href="data/README.md">data requirements</a>.</p></details>
       </div>
     </section>
     <section class="research-strip" id="limitations" aria-labelledby="limitations-title">
@@ -73,7 +74,8 @@
       <p class="section-kicker">Sources</p><h2 id="sources-title">Public data, documented choices</h2>
       <p>Survey documentation and related US research provide context; the academic studies do not supply estimates for this Washington map.</p>
       <div class="source-list">
-        <a href="https://www.cdc.gov/prams/" target="_blank" rel="noopener"><span>Survey background</span><strong>CDC PRAMS ↗</strong></a>
+        <a href="https://mchb.tvisdata.hrsa.gov/Narratives/PlanForTheApplicationYear1/7a66b08a-cdf4-4989-9629-00fe29aa0244" target="_blank" rel="noopener"><span>2023 statewide benchmark</span><strong>Washington Title V Action Plan ↗</strong></a>
+        <a href="https://data.medicaid.gov/dataset/ed67e610-aed3-4bed-842f-e6044511dd64" target="_blank" rel="noopener"><span>Medicaid service data</span><strong>CMS T-MSIS Perinatal Care ↗</strong></a>
         <a href="https://jamanetwork.com/journals/jama-health-forum/fullarticle/2797463" target="_blank" rel="noopener"><span>Interrante et al. (2022)</span><strong>Association of Health Insurance, Geography, and Race and Ethnicity With Disparities in Receipt of Recommended Postpartum Care in the US ↗</strong></a>
         <a href="https://jamanetwork.com/journals/jamanetworkopen/fullarticle/2805510" target="_blank" rel="noopener"><span>Saldanha et al. (2023)</span><strong>Health Insurance Coverage and Postpartum Outcomes in the US: A Systematic Review ↗</strong></a>
         <a href="https://doh.wa.gov/data-and-statistical-reports/washington-tracking-network-wtn/perinatal-data/dashboard" target="_blank" rel="noopener"><span>Health data</span><strong>Washington DOH Perinatal Dashboard ↗</strong></a>
@@ -83,7 +85,7 @@
       </div>
     </section>
   </main>
-  <footer><p>After Birth, Across Washington</p><p>Public-health research prototype · Checkup estimates pending</p></footer>
+  <footer><p>After Birth, Across Washington</p><p>Public-health research prototype · PRAMS and CMS data</p></footer>
   <noscript><p class="empty-state">JavaScript is needed for the interactive map. Checkup estimates have not been supplied; see Methods for data requirements.</p></noscript>
   <script src="https://unpkg.com/maplibre-gl@5.6.1/dist/maplibre-gl.js"></script><script src="https://cdn.jsdelivr.net/npm/d3@7"></script><script src="app.js"></script>
 </body>

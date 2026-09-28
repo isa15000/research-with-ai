@@ -11,7 +11,12 @@ All local data files were inspected before the dashboard update.
 - processed/postpartum_depression_medicaid_2021_2023.csv: preserved legacy statewide Medicaid / Non-Medicaid comparison for 2021–2023. These categories are NOT confirmed for checkup data.
 - ../scripts/prepare_postpartum_ach_data.ps1: preserved legacy extraction and county-to-ACH boundary aggregation. It is not a checkup extraction script. Its old insurance numeric conversion should not be reused for new data because blanks can become zero.
 
-No original dataset was deleted or overwritten. References were checked; the site now loads only the new checkup CSVs and the existing ACH geometry.
+No original dataset was deleted or overwritten. The site loads the checkup templates, existing ACH geometry, and the processed CMS Medicaid postpartum-visit series.
+
+## Added relevant utilization data
+
+- `processed/cms_wa_medicaid_postpartum_visits_2018_2022.csv`: 60 monthly Washington observations for postpartum visits among female Medicaid and CHIP beneficiaries ages 15–44. The measure is a service rate per 1,000 beneficiaries, not the percentage of postpartum people receiving a checkup. Source: CMS T-MSIS Analytic Files.
+- Washington's Title V action plan reports that 91% of mothers attended a postpartum visit within 12 weeks in 2023, based on PRAMS. This statewide benchmark is shown on the page but cannot populate ACH regions or an insurance comparison.
 
 ## Exactly what to obtain
 

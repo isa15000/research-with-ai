@@ -2,6 +2,7 @@
 // PRAMS checkup data following data/README.md; never reuse another outcome.
 const DATA_URL = "data/processed/postpartum_checkup_ach.csv";
 const INSURANCE_URL = "data/processed/postpartum_checkup_insurance.csv";
+const CMS_MEDICAID_URL = "data/processed/cms_wa_medicaid_postpartum_visits_2018_2022.csv";
 const GEO_URL = "data/processed/wa_ach_boundaries.geojson";
 const OUTCOME = "Had maternal postpartum checkup";
 const escapeHtml = value => String(value ?? "").replace(/[&<>'"]/g, c =>
@@ -197,14 +198,30 @@ function buildChart(selector, rows, key, title) {
   }
   buildTable(selector,rows,key,title+" — source order; no ranking");
 }
+function buildMedicaidTrend(rows) {
+  const container=d3.select("#insurance-chart");container.selectAll("*").remove();
+  const parseMonth=d3.timeParse("%Y-%m");
+  const parsed=rows.filter(d=>d.rate_per_1000_female_beneficiaries!=null).map(d=>({...d,date:d.month instanceof Date?d.month:parseMonth(d.month),rate:+d.rate_per_1000_female_beneficiaries}));
+  const width=900,height=390,margin={top:24,right:35,bottom:55,left:65};
+  const svg=container.append("div").attr("class","chart-scroll").append("svg").attr("viewBox",`0 0 ${width} ${height}`).attr("role","img");
+  svg.append("title").text("Monthly postpartum visits per 1,000 female Medicaid and CHIP beneficiaries ages 15 to 44 in Washington, 2018 through 2022");
+  const x=d3.scaleTime().domain(d3.extent(parsed,d=>d.date)).range([margin.left,width-margin.right]);
+  const y=d3.scaleLinear().domain([0,d3.max(parsed,d=>d.rate)*1.15]).nice().range([height-margin.bottom,margin.top]);
+  svg.append("g").attr("class","axis grid").attr("transform",`translate(${margin.left},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(width-margin.left-margin.right))).call(g=>g.select(".domain").remove());
+  svg.append("g").attr("class","axis").attr("transform",`translate(0,${height-margin.bottom})`).call(d3.axisBottom(x).ticks(d3.timeYear.every(1)).tickFormat(d3.timeFormat("%Y"))).call(g=>g.select(".domain").remove());
+  svg.append("path").datum(parsed).attr("fill","none").attr("stroke","#e66d55").attr("stroke-width",3).attr("d",d3.line().x(d=>x(d.date)).y(d=>y(d.rate)));
+  svg.selectAll(".trend-dot").data(parsed).join("circle").attr("class","trend-dot").attr("cx",d=>x(d.date)).attr("cy",d=>y(d.rate)).attr("r",3).attr("fill","#244b40").append("title").text(d=>`${d3.timeFormat("%Y-%m")(d.date)}: ${d.rate.toFixed(1)} visits per 1,000; ${Number(d.service_count).toLocaleString()} services`);
+  svg.append("text").attr("x",margin.left).attr("y",14).attr("font-size",12).attr("fill","#626a65").text("Visits per 1,000 beneficiaries");
+  const april=parsed.find(d=>d3.timeFormat("%Y-%m")(d.date)==="2020-04");if(april){svg.append("line").attr("x1",x(april.date)).attr("x2",x(april.date)).attr("y1",y(april.rate)-45).attr("y2",y(april.rate)-7).attr("stroke","#626a65");svg.append("text").attr("x",x(april.date)+6).attr("y",y(april.rate)-34).attr("font-size",11).attr("fill","#626a65").text("April 2020: 14.2")}
+}
 async function initialize() {
   if (!window.d3) {
     document.getElementById("map-status").textContent = "Visualization library unavailable. Check your internet connection. Checkup data have not yet been supplied.";
     return;
   }
   // Load independently so one missing/malformed dataset cannot disable the others.
-  const [regional, insurance, boundaries] = await Promise.allSettled([
-    loadRows(DATA_URL,"ach_name"), loadRows(INSURANCE_URL,"coverage_group"), d3.json(GEO_URL)
+  const [regional, insurance, boundaries, medicaidTrend] = await Promise.allSettled([
+    loadRows(DATA_URL,"ach_name"), loadRows(INSURANCE_URL,"coverage_group"), d3.json(GEO_URL), d3.csv(CMS_MEDICAID_URL,d3.autoType)
   ]);
   let rows = regional.status === "fulfilled" ? regional.value : [];
   const coverage = insurance.status === "fulfilled" ? insurance.value : [];
@@ -225,8 +242,8 @@ async function initialize() {
   } else document.getElementById("map-status").textContent = "Regional boundaries could not load. Serve this folder over HTTP and check local assets.";
   if (regionalError) emptyState("#chart","Regional checkup data could not be validated or loaded. See data/README.md for the required fields and ACH names.");
   else buildChart("#chart",rows,"ach_name","Maternal postpartum checkup utilization by ACH");
-  if (insurance.status === "rejected") emptyState("#insurance-chart","Insurance checkup data could not be validated or loaded. See data/README.md for the required fields.");
-  else buildChart("#insurance-chart",coverage,"coverage_group","Maternal postpartum checkup utilization by insurance group");
+  if (medicaidTrend.status === "fulfilled" && medicaidTrend.value.length) buildMedicaidTrend(medicaidTrend.value);
+  else emptyState("#insurance-chart","CMS Medicaid postpartum-visit data could not be loaded.");
   if (rows.length) {
     document.getElementById("chart-title").textContent = "Regional checkup utilization";
     document.querySelector(".chart-key").hidden = !rows.some(row=>row.estimate_percent!=null);
